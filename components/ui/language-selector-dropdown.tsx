@@ -47,10 +47,10 @@ export const LanguageSelectorDropdown = () => {
       {open && (
         <div
           className={cn(
-            "absolute left-0 mt-2 w-48 rounded-xl overflow-hidden",
+            "absolute left-0 mt-2 w-50 rounded-xl overflow-hidden",
             "bg-white/90 dark:bg-neutral-900/95 backdrop-blur-xl",
             "shadow-lg border border-gray-200 dark:border-neutral-700",
-            "animate-fade-in",
+            "animate-fade-in z-[100]",
           )}
         >
           {languages.map((lang) => (
@@ -68,7 +68,7 @@ export const LanguageSelectorDropdown = () => {
               )}
             >
               <span>{lang.flag}</span>
-              <span className="flex-1">{lang.label}</span>
+              <span className="flex-1 text-md">{lang.label}</span>
               {selected.code === lang.code && (
                 <Check className="h-4 w-4 text-blue-500 dark:text-blue-400" />
               )}

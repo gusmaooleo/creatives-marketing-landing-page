@@ -2,6 +2,7 @@
 
 import { Header } from "@/components/ui/header";
 import Hero from "@/components/sections/Hero";
+import AboutUs from "@/components/sections/AboutUs";
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
       <main className="flex-1">
         <div className="p-4">
           <Hero />
+          <AboutUs />
         </div>
       </main>
     </div>
