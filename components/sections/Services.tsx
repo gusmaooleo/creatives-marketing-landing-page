@@ -95,7 +95,7 @@ const services = [
 ];
 
 const tagVariants = {
-  hidden: { opacity: 0, y: 16, scale: 0.95 },
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,

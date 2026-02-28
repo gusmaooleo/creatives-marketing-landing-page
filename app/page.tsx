@@ -21,7 +21,7 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <Partners />
+        {/* <Partners /> */}
         <AboutUs />
         <Suspense fallback={null}>
           <Services />

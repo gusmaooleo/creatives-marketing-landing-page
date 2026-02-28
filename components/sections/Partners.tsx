@@ -33,7 +33,7 @@ const itemVariants: any = {
 
 export default function Partners() {
   return (
-    <section id="parceiros" className="py-16 md:py-24">
+    <section id="parceiros" className="pt-16 md:pt-24 pb-0">
       <div className="container mx-auto px-4 md:px-8">
         <motion.p
           className="text-center text-sm font-medium tracking-widest uppercase text-muted-foreground/60 mb-12"
