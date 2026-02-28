@@ -11,7 +11,6 @@ import { MobileMenu } from "./mobile-menu";
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Awwwards-level entrance animation variants
   const containerVariants: any = {
     hidden: { opacity: 0, y: -10 },
     visible: {
@@ -70,7 +69,6 @@ export function Header() {
         className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       >
         <div className="container relative flex h-16 sm:h-20 items-center mx-auto px-4 md:px-8 justify-between">
-          {/* Left: Creatives / Marketing & Nav (Desktop only) */}
           <motion.div
             variants={itemLeftVariants}
             className="hidden md:flex flex-1 items-center space-x-6"
@@ -129,7 +127,6 @@ export function Header() {
             </nav>
           </motion.div>
 
-          {/* Center: Logo perfectly positioned (Desktop) */}
           <motion.div
             variants={centerLogoVariants}
             className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -139,7 +136,6 @@ export function Header() {
             </Link>
           </motion.div>
 
-          {/* Left: Logo (Mobile only) */}
           <motion.div
             variants={itemLeftVariants}
             className="flex md:hidden flex-1"
@@ -149,7 +145,6 @@ export function Header() {
             </Link>
           </motion.div>
 
-          {/* Right: Contate-nos & Settings (Desktop only) */}
           <motion.div
             variants={itemRightVariants}
             className="hidden md:flex flex-1 justify-end items-center space-x-8 text-xs font-medium tracking-widest uppercase text-foreground/80"
@@ -164,7 +159,6 @@ export function Header() {
               </Link>
             </nav>
 
-            {/* Divider */}
             <div className="w-[1px] h-6 bg-border/40"></div>
 
             <div className="flex items-center gap-3">
@@ -173,7 +167,6 @@ export function Header() {
             </div>
           </motion.div>
 
-          {/* Mobile Menu Toggle Button */}
           <motion.div
             variants={itemRightVariants}
             className="flex md:hidden justify-end"

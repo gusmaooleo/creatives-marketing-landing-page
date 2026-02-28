@@ -3,11 +3,12 @@ import Spline from "@splinetool/react-spline";
 
 export default function HeroAnimation() {
   return (
-    <main className="w-full h-full">
+    <div className="w-full h-full relative">
       <Spline
         scene={"https://prod.spline.design/4xLc7PRR6kLlHdPo/scene.splinecode"}
-        className="w-full h-full bg-transparent"
+        className="!w-full !h-full bg-transparent"
+        style={{ position: "absolute", inset: 0 }}
       />
-    </main>
+    </div>
   );
 }
