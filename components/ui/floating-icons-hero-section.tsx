@@ -139,20 +139,6 @@ const FloatingIconsHero = React.forwardRef<
           />
         ))}
       </div>
-
-      {/* <div className="relative z-10 text-center px-4">
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-b from-foreground to-foreground/70 text-transparent bg-clip-text">
-          {title}
-        </h1>
-        <p className="mt-6 max-w-xl mx-auto text-lg text-muted-foreground">
-          {subtitle}
-        </p>
-        <div className="mt-10">
-          <Button asChild size="lg" className="px-8 py-6 text-base font-semibold">
-            <a href={ctaHref}>{ctaText}</a>
-          </Button>
-        </div>
-      </div> */}
     </section>
   );
 });

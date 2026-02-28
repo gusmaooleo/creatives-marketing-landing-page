@@ -22,12 +22,7 @@ export default function Home() {
       <main className="flex-1">
         <Hero />
         <Partners />
-        <div className="relative">
-          <Suspense fallback={null}>
-            <Waves className="h-full w-full opacity-10" />
-          </Suspense>
-          <AboutUs />
-        </div>
+        <AboutUs />
         <Suspense fallback={null}>
           <Services />
         </Suspense>
