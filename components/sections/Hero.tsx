@@ -3,11 +3,15 @@
 import { Suspense, lazy } from "react";
 import { HeroContent } from "../ui/hero-dithering-card";
 import { createPortal } from "react-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const HeroAnimation = lazy(() => import("./hero/3DMarketing"));
 
-export default function Hero() {
+interface HeroProps {
+  onSplineLoad?: () => void;
+}
+
+export default function Hero({ onSplineLoad }: HeroProps) {
   const [slotEl, setSlotEl] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -33,7 +37,7 @@ export default function Hero() {
               </div>
             }
           >
-            <HeroAnimation />
+            <HeroAnimation onLoad={onSplineLoad} />
           </Suspense>,
           slotEl,
         )}

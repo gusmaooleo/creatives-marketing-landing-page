@@ -172,7 +172,7 @@ export default function AboutUs() {
     <section id="sobre-nos" className="py-20 md:py-32 relative overflow-hidden">
       {/* Flowfield background */}
       <div className="absolute inset-0 -z-10 opacity-15 pointer-events-none">
-        <FlowfieldGlyphsBackground particleCount={800}>
+        <FlowfieldGlyphsBackground particleCount={400}>
           <></>
         </FlowfieldGlyphsBackground>
       </div>
@@ -205,7 +205,7 @@ export default function AboutUs() {
           >
             <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border/20 p-2 md:rounded-[1.5rem] md:p-3">
               <GlowingEffect {...glowProps} />
-              <div className="relative h-full rounded-xl border-[0.75px] border-border/10 bg-background/70 backdrop-blur-2xl p-8 md:p-12 overflow-hidden group">
+              <div className="relative h-full rounded-xl border-[0.75px] border-border/10 bg-background/70 backdrop-blur-2xl p-8 md:p-12 overflow-hidden group shadow-lg shadow-primary/5">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.04] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-opacity duration-700 group-hover:opacity-100 opacity-50" />
 
                 <div className="relative z-10">
@@ -262,7 +262,7 @@ export default function AboutUs() {
           >
             <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border/20 p-2 md:rounded-[1.5rem] md:p-3">
               <GlowingEffect {...glowProps} />
-              <div className="relative h-full rounded-xl border-[0.75px] border-border/10 bg-background/70 backdrop-blur-2xl p-8 md:p-10 overflow-hidden flex flex-col justify-between">
+              <div className="relative h-full rounded-xl border-[0.75px] border-primary/15 bg-background/70 backdrop-blur-2xl p-8 md:p-10 overflow-hidden flex flex-col justify-between shadow-lg shadow-primary/10">
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/[0.05] rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
                 <div className="relative z-10 flex-1 flex flex-col justify-between gap-6">
@@ -302,7 +302,7 @@ export default function AboutUs() {
           >
             <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border/20 p-2 md:rounded-[1.5rem] md:p-3">
               <GlowingEffect {...glowProps} />
-              <div className="relative h-full rounded-xl border-[0.75px] border-border/10 bg-background/70 backdrop-blur-2xl p-6 md:p-8 overflow-hidden">
+              <div className="relative h-full rounded-xl border-[0.75px] border-border/10 bg-background/70 backdrop-blur-2xl p-6 md:p-8 overflow-hidden shadow-lg shadow-primary/5">
                 <p className="text-xs tracking-widest uppercase text-muted-foreground/50 mb-4 font-medium">
                   Especialidades
                 </p>
@@ -332,7 +332,7 @@ export default function AboutUs() {
           >
             <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border/20 p-2 md:rounded-[1.5rem] md:p-3">
               <GlowingEffect {...glowProps} />
-              <div className="relative h-full rounded-xl border-[0.75px] border-border/10 bg-background/70 backdrop-blur-2xl p-6 md:p-8 overflow-hidden flex flex-col justify-center">
+              <div className="relative h-full rounded-xl border-[0.75px] border-primary/15 bg-primary/[0.03] backdrop-blur-2xl p-6 md:p-8 overflow-hidden flex flex-col justify-center shadow-lg shadow-primary/10">
                 <p className="text-4xl md:text-5xl font-serif font-bold text-foreground tracking-tight">
                   2026
                 </p>
