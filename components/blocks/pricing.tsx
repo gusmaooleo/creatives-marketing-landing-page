@@ -3,14 +3,14 @@
 import { buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Check, Star } from "lucide-react";
+import { Check, Star, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 interface PricingPlan {
   name: string;
@@ -30,13 +30,31 @@ interface PricingProps {
   description?: string;
 }
 
+const cardVariants: any = {
+  hidden: { opacity: 0, y: 40, filter: "blur(4px)" },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: "easeOut", delay },
+  }),
+};
+
+const glowProps = {
+  spread: 40,
+  glow: true,
+  disabled: false,
+  proximity: 64,
+  inactiveZone: 0.01,
+  borderWidth: 3,
+};
+
 export function Pricing({
   plans,
-  title = "Simple, Transparent Pricing",
-  description = "Choose the plan that works for you\nAll plans include access to our platform, lead generation tools, and dedicated support.",
+  title = "Planos & Preços",
+  description = "Escolha o plano ideal para o seu negócio.\nTodos os planos incluem suporte dedicado e acesso à nossa plataforma.",
 }: PricingProps) {
   const [isMonthly, setIsMonthly] = useState(true);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const switchRef = useRef<HTMLButtonElement>(null);
 
   const handleToggle = (checked: boolean) => {
@@ -53,12 +71,7 @@ export function Pricing({
           x: x / window.innerWidth,
           y: y / window.innerHeight,
         },
-        colors: [
-          "hsl(var(--primary))",
-          "hsl(var(--accent))",
-          "hsl(var(--secondary))",
-          "hsl(var(--muted))",
-        ],
+        colors: ["#F4AA41", "#FFD497", "#EC4E02", "#FFF3DB"],
         ticks: 200,
         gravity: 1.2,
         decay: 0.94,
@@ -69,17 +82,39 @@ export function Pricing({
   };
 
   return (
-    <div className="container py-20">
-      <div className="text-center space-y-4 mb-12">
-        <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+    <div>
+      {/* Section header */}
+      <motion.div
+        className="text-center space-y-4 mb-12"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <h3 className="text-4xl md:text-5xl font-bold tracking-tight font-serif">
           {title}
-        </h2>
-        <p className="text-muted-foreground text-lg whitespace-pre-line">
+        </h3>
+        <p className="text-muted-foreground text-base md:text-lg whitespace-pre-line max-w-2xl mx-auto">
           {description}
         </p>
-      </div>
+      </motion.div>
 
-      <div className="flex justify-center mb-10">
+      {/* Billing toggle */}
+      <motion.div
+        className="flex justify-center items-center mb-10 gap-3"
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
+        <span
+          className={cn(
+            "text-sm font-medium transition-colors",
+            isMonthly ? "text-foreground" : "text-muted-foreground/50",
+          )}
+        >
+          Mensal
+        </span>
         <label className="relative inline-flex items-center cursor-pointer">
           <Label>
             <Switch
@@ -90,119 +125,131 @@ export function Pricing({
             />
           </Label>
         </label>
-        <span className="ml-2 font-semibold">
-          Annual billing <span className="text-primary">(Save 20%)</span>
+        <span
+          className={cn(
+            "text-sm font-medium transition-colors",
+            !isMonthly ? "text-foreground" : "text-muted-foreground/50",
+          )}
+        >
+          Anual{" "}
+          <span className="text-primary font-semibold">(Economize 20%)</span>
         </span>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 sm:2 gap-4">
+      {/* Cards grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
         {plans.map((plan, index) => (
           <motion.div
             key={index}
-            initial={{ y: 50, opacity: 1 }}
-            whileInView={
-              isDesktop
-                ? {
-                    y: plan.isPopular ? -20 : 0,
-                    opacity: 1,
-                    x: index === 2 ? -30 : index === 0 ? 30 : 0,
-                    scale: index === 0 || index === 2 ? 0.94 : 1.0,
-                  }
-                : {}
-            }
-            viewport={{ once: true }}
-            transition={{
-              duration: 1.6,
-              type: "spring",
-              stiffness: 100,
-              damping: 30,
-              delay: 0.4,
-              opacity: { duration: 0.5 },
-            }}
-            className={cn(
-              `rounded-2xl border-[1px] p-6 bg-background text-center lg:flex lg:flex-col lg:justify-center relative`,
-              plan.isPopular ? "border-primary border-2" : "border-border",
-              "flex flex-col",
-              !plan.isPopular && "mt-5",
-              index === 0 || index === 2
-                ? "z-0 transform translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg]"
-                : "z-10",
-              index === 0 && "origin-right",
-              index === 2 && "origin-left",
-            )}
+            className="list-none"
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            custom={index * 0.1}
           >
-            {plan.isPopular && (
-              <div className="absolute top-0 right-0 bg-primary py-0.5 px-2 rounded-bl-xl rounded-tr-xl flex items-center">
-                <Star className="text-primary-foreground h-4 w-4 fill-current" />
-                <span className="text-primary-foreground ml-1 font-sans font-semibold">
-                  Popular
-                </span>
-              </div>
-            )}
-            <div className="flex-1 flex flex-col">
-              <p className="text-base font-semibold text-muted-foreground">
-                {plan.name}
-              </p>
-              <div className="mt-6 flex items-center justify-center gap-x-2">
-                <span className="text-5xl font-bold tracking-tight text-foreground">
-                  <NumberFlow
-                    value={
-                      isMonthly ? Number(plan.price) : Number(plan.yearlyPrice)
-                    }
-                    format={{
-                      style: "currency",
-                      currency: "USD",
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    }}
-                    transformTiming={{
-                      duration: 500,
-                      easing: "ease-out",
-                    }}
-                    willChange
-                    className="font-variant-numeric: tabular-nums"
-                  />
-                </span>
-                {plan.period !== "Next 3 months" && (
-                  <span className="text-sm font-semibold leading-6 tracking-wide text-muted-foreground">
-                    / {plan.period}
-                  </span>
-                )}
-              </div>
+            <div
+              className={cn(
+                "relative h-full rounded-[1.25rem] border-[0.75px] p-2 md:rounded-[1.5rem] md:p-3",
+                plan.isPopular ? "border-primary/40" : "border-border/20",
+              )}
+            >
+              {plan.isPopular && <GlowingEffect {...glowProps} />}
 
-              <p className="text-xs leading-5 text-muted-foreground">
-                {isMonthly ? "billed monthly" : "billed annually"}
-              </p>
-
-              <ul className="mt-5 gap-2 flex flex-col">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
-                    <span className="text-left">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <hr className="w-full my-4" />
-
-              <Link
-                href={plan.href}
+              <div
                 className={cn(
-                  buttonVariants({
-                    variant: "outline",
-                  }),
-                  "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
+                  "relative h-full rounded-xl border-[0.75px] overflow-hidden flex flex-col",
                   plan.isPopular
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-background text-foreground",
+                    ? "border-primary/20 bg-primary/[0.04] dark:bg-primary/[0.06]"
+                    : "border-border/10 bg-foreground/[0.02] dark:bg-foreground/[0.03]",
+                  "backdrop-blur-xl p-6 md:p-8",
                 )}
               >
-                {plan.buttonText}
-              </Link>
-              <p className="mt-6 text-xs leading-5 text-muted-foreground">
-                {plan.description}
-              </p>
+                {/* Popular badge */}
+                {plan.isPopular && (
+                  <div className="absolute top-0 right-0 bg-primary py-1 px-3 rounded-bl-xl rounded-tr-lg flex items-center gap-1.5">
+                    <Star className="text-primary-foreground h-3.5 w-3.5 fill-current" />
+                    <span className="text-primary-foreground text-xs font-semibold tracking-wide uppercase">
+                      Popular
+                    </span>
+                  </div>
+                )}
+
+                {/* Plan name */}
+                <p className="text-xs tracking-widest uppercase text-muted-foreground/50 font-medium mb-4">
+                  {plan.name}
+                </p>
+
+                {/* Price */}
+                <div className="flex items-baseline gap-x-1 mb-1">
+                  <span className="text-4xl md:text-5xl font-bold tracking-tight text-foreground tabular-nums">
+                    <NumberFlow
+                      value={
+                        isMonthly
+                          ? Number(plan.price)
+                          : Number(plan.yearlyPrice)
+                      }
+                      format={{
+                        style: "currency",
+                        currency: "BRL",
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }}
+                      transformTiming={{
+                        duration: 500,
+                        easing: "ease-out",
+                      }}
+                      willChange
+                      className="tabular-nums"
+                    />
+                  </span>
+                  {plan.period !== "sob consulta" && (
+                    <span className="text-sm font-medium text-muted-foreground/60">
+                      /{plan.period}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-muted-foreground/40 mb-6">
+                  {isMonthly ? "cobrado mensalmente" : "cobrado anualmente"}
+                </p>
+
+                {/* Features */}
+                <ul className="flex-1 space-y-3 mb-6">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5">
+                      <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-foreground/70 leading-snug">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* CTA */}
+                <Link
+                  href={plan.href}
+                  className={cn(
+                    buttonVariants({ variant: "outline" }),
+                    "w-full gap-2 text-sm font-semibold tracking-tight",
+                    "transition-all duration-300 ease-out",
+                    "hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
+                    plan.isPopular
+                      ? "bg-primary text-primary-foreground border-primary/30"
+                      : "bg-foreground/[0.03] border-border/20 text-foreground hover:border-primary/30",
+                  )}
+                >
+                  {plan.isPopular && (
+                    <Sparkles className="h-4 w-4 fill-current" />
+                  )}
+                  {plan.buttonText}
+                </Link>
+
+                {/* Description */}
+                <p className="mt-4 text-xs leading-relaxed text-muted-foreground/40 text-center">
+                  {plan.description}
+                </p>
+              </div>
             </div>
           </motion.div>
         ))}
