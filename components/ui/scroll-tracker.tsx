@@ -102,16 +102,14 @@ export function ScrollTracker() {
 
       {/* User indicator */}
       <motion.div
-        className="absolute right-0 w-7 h-7 rounded-full bg-primary/90 flex items-center justify-center text-xs font-bold text-primary-foreground shadow-lg shadow-primary/20"
+        className="absolute right-0 w-4 h-4 rounded-full bg-primary/90 flex items-center justify-center text-xs font-bold text-primary-foreground shadow-lg shadow-primary/20"
         style={{
           top: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]),
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.2, type: "spring", stiffness: 200, damping: 15 }}
-      >
-        L
-      </motion.div>
+      ></motion.div>
     </div>
   );
 }
