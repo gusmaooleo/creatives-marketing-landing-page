@@ -1,3 +1,5 @@
+"use server";
+
 /**
  * Utility function to convert nested object data into clean HTML for email bodies.
  */
@@ -55,6 +57,11 @@ export async function sendEmailSubmission(
   const toEmail = process.env.MAIL_TO;
 
   const htmlBody = createHtmlFromData(data);
+
+  console.log("htmlBody", htmlBody);
+  console.log("apiUrl", apiUrl);
+  console.log("mailKey", mailKey);
+  console.log("toEmail", toEmail);
 
   try {
     const response = await fetch(apiUrl!, {
