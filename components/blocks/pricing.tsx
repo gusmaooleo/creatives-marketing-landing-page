@@ -33,11 +33,10 @@ interface PricingProps {
 }
 
 const cardVariants: any = {
-  hidden: { opacity: 0, y: 40, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 40 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
     transition: { duration: 0.7, ease: "easeOut", delay },
   }),
 };
@@ -162,9 +161,9 @@ export function Pricing({
                 className={cn(
                   "relative h-full rounded-xl border-[0.75px] overflow-hidden flex flex-col",
                   plan.isPopular
-                    ? "border-primary/20 bg-primary/[0.04] dark:bg-primary/[0.06]"
-                    : "border-border/10 bg-foreground/[0.02] dark:bg-foreground/[0.03]",
-                  "backdrop-blur-xl p-6 md:p-8",
+                    ? "border-primary/20 bg-primary/[0.1] supports-[backdrop-filter]:bg-primary/[0.04] dark:bg-primary/[0.15] dark:supports-[backdrop-filter]:bg-primary/[0.06]"
+                    : "border-border/10 bg-foreground/[0.05] supports-[backdrop-filter]:bg-foreground/[0.02] dark:bg-foreground/[0.1] dark:supports-[backdrop-filter]:bg-foreground/[0.03]",
+                  "backdrop-blur-2xl p-6 md:p-8",
                 )}
               >
                 {/* Popular badge */}

@@ -58,10 +58,13 @@ export const PricingWrapper: React.FC<{
       className,
     )}
   >
-    <div className="w-full h-full relative z-[2] p-6 lg:p-10 flex flex-col justify-between isolate">
-      {children}
+    <div className="w-full h-full relative z-10 p-6 lg:p-10 flex flex-col justify-between isolate">
+      {/* Content wrapper with its own stacking context */}
+      <div className="relative z-0 flex-1">{children}</div>
+
+      {/* Button wrapper explicitly placed physically below the content with high z-index */}
       {buttonText && (
-        <div className="w-full flex items-end justify-start mt-auto pt-8">
+        <div className="relative z-20 w-full flex items-end justify-start mt-6 lg:mt-auto pt-4">
           <Link href={contactHref} className="w-fit">
             <button className="h-12 px-8 bg-primary rounded-full text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20 hover:scale-[1.03]">
               {buttonText}
