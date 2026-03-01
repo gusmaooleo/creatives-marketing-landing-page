@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { HeroContent } from "../ui/hero-dithering-card";
 import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
 
 const HeroAnimation = lazy(() => import("./hero/3DMarketing"));
 
@@ -12,12 +11,29 @@ interface HeroProps {
 }
 
 export default function Hero({ onSplineLoad }: HeroProps) {
-  const [slotEl, setSlotEl] = useState<HTMLElement | null>(null);
+  const [isDesktop, setIsDesktop] = useState(
+    typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 768px)").matches,
+  );
+  const [slotEl, setSlotEl] = useState<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const el = document.getElementById("hero-3d-slot");
-    if (el) setSlotEl(el);
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const handleChange = (event: MediaQueryListEvent) => {
+      setIsDesktop(event.matches);
+    };
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
   }, []);
+
+  useEffect(() => {
+    if (!isDesktop) {
+      onSplineLoad?.();
+    }
+  }, [isDesktop, onSplineLoad]);
 
   return (
     <section
@@ -25,10 +41,11 @@ export default function Hero({ onSplineLoad }: HeroProps) {
       className="relative w-full min-h-[calc(100vh-5rem)] flex items-center py-6 md:py-10"
     >
       <div className="container mx-auto px-4 md:px-8">
-        <HeroContent />
+        <HeroContent onSlotReady={setSlotEl} />
       </div>
 
-      {slotEl &&
+      {isDesktop &&
+        slotEl &&
         createPortal(
           <Suspense
             fallback={

@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -29,7 +29,7 @@ import { FloatingFeed } from "./separated-services/FloatingFeed";
 import { AICore } from "./separated-services/AICore";
 import { ServiceRow } from "./separated-services/ServiceRow";
 
-const textVariants: any = {
+const textVariants: Variants = {
   hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
   visible: {
     opacity: 1,
@@ -39,7 +39,7 @@ const textVariants: any = {
   },
 };
 
-const splineVariants: any = {
+const splineVariants: Variants = {
   hidden: { opacity: 0, scale: 0.92 },
   visible: {
     opacity: 1,
@@ -53,6 +53,7 @@ export default function SeparatedServices() {
   const rowsRef = useRef<(HTMLDivElement | null)[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(1);
+  const activeSlideRef = useRef(1);
 
   // GSAP animations for Desktop Bento Grid reveal
   useEffect(() => {
@@ -61,7 +62,7 @@ export default function SeparatedServices() {
     if (!isDesktop) return;
 
     const ctx = gsap.context(() => {
-      rowsRef.current.forEach((row, index) => {
+      rowsRef.current.forEach((row) => {
         if (!row) return;
 
         gsap.fromTo(
@@ -91,21 +92,25 @@ export default function SeparatedServices() {
     return () => ctx.revert();
   }, []);
 
-  // Update mobile active slide index based on scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollRef.current) {
-        const { scrollLeft, clientWidth } = scrollRef.current;
-        const index = Math.round(scrollLeft / clientWidth) + 1;
-        setActiveSlide(index);
-      }
-    };
+  const handleMobileScroll = useCallback(() => {
     const scrollEl = scrollRef.current;
-    if (scrollEl) {
-      scrollEl.addEventListener("scroll", handleScroll, { passive: true });
-      return () => scrollEl.removeEventListener("scroll", handleScroll);
+    if (!scrollEl) return;
+
+    const index = Math.round(scrollEl.scrollLeft / scrollEl.clientWidth) + 1;
+    if (index !== activeSlideRef.current) {
+      activeSlideRef.current = index;
+      setActiveSlide(index);
     }
   }, []);
+
+  useEffect(() => {
+    const scrollEl = scrollRef.current;
+    if (scrollEl) {
+      scrollEl.addEventListener("scroll", handleMobileScroll, { passive: true });
+      handleMobileScroll();
+      return () => scrollEl.removeEventListener("scroll", handleMobileScroll);
+    }
+  }, [handleMobileScroll]);
 
   return (
     <section

@@ -1,18 +1,25 @@
 "use client";
 
 import { useState, Suspense, lazy, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import {
+  motion,
+  type Variants,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { AnimatedHeadline } from "./animated-headline";
 import { MagneticButton } from "./magnetic-button";
 
 const Dithering = lazy(() =>
-  // @ts-ignore
+  // @ts-expect-error -- Library export is untyped.
   import("@paper-design/shaders-react").then((mod) => ({
     default: mod.Dithering,
   })),
 );
 
-const fadeUpVariants: any = {
+const fadeUpVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: (delay: number) => ({
     opacity: 1,
@@ -21,19 +28,27 @@ const fadeUpVariants: any = {
   }),
 };
 
-export function HeroContent() {
+interface HeroContentProps {
+  onSlotReady?: (element: HTMLDivElement | null) => void;
+}
+
+export function HeroContent({ onSlotReady }: HeroContentProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const smoothMouseX = useSpring(mouseX, { stiffness: 220, damping: 25 });
+  const smoothMouseY = useSpring(mouseY, { stiffness: 220, damping: 25 });
+  const offsetX = useTransform(smoothMouseX, (value) => `${(value - 0.5) * 10}px`);
+  const offsetY = useTransform(smoothMouseY, (value) => `${(value - 0.5) * 10}px`);
+  const heroSlotTransform = useMotionTemplate`translate(${offsetX}, ${offsetY})`;
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    setMousePos({
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height,
-    });
-  }, []);
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
+  }, [mouseX, mouseY]);
 
   return (
     <div
@@ -42,7 +57,8 @@ export function HeroContent() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
-        setMousePos({ x: 0.5, y: 0.5 });
+        mouseX.set(0.5);
+        mouseY.set(0.5);
       }}
       onMouseMove={handleMouseMove}
     >
@@ -50,7 +66,7 @@ export function HeroContent() {
       <Suspense fallback={<div className="absolute inset-0 bg-muted/20" />}>
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-30 mix-blend-multiply dark:mix-blend-screen">
           <Dithering
-            // @ts-ignore
+            // @ts-expect-error -- Dithering props are not fully typed by the library.
             colorBack="#00000000"
             colorFront="#EC4E02"
             shape="warp"
@@ -113,12 +129,11 @@ export function HeroContent() {
         {/* Right side: 3D Spline animation — spans 6 columns */}
         <div className="hidden md:block col-span-1 md:col-span-6 relative min-h-[500px] lg:min-h-[1000px]">
           {/* Pulsing orange glow behind 3D phone */}
-          <div
+          <motion.div
+            ref={onSlotReady}
             id="hero-3d-slot"
             className="absolute inset-0 z-10 will-change-transform transition-transform duration-200 ease-out"
-            style={{
-              transform: `translate(${(mousePos.x - 0.5) * 10}px, ${(mousePos.y - 0.5) * 10}px)`,
-            }}
+            style={{ transform: heroSlotTransform }}
           />
         </div>
       </div>

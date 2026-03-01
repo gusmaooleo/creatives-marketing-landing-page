@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 interface Section {
@@ -19,38 +19,57 @@ const sections: Section[] = [
 
 export function ScrollTracker() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const activeIndexRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
   const { scrollYProgress } = useScroll();
-
   const fillHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const indicatorTop = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
-  const handleScroll = useCallback(() => {
+  const updateActiveSection = useCallback(() => {
     const threshold = window.innerHeight / 3;
-
-    // If user is near the bottom of the page, activate "contato" (last section)
     const atBottom =
       window.scrollY + window.innerHeight >=
       document.documentElement.scrollHeight - 100;
+    let nextIndex = 0;
 
     if (atBottom) {
-      setActiveIndex(sections.length - 1);
-      return;
-    }
-
-    for (let i = sections.length - 1; i >= 0; i--) {
-      const el = document.getElementById(sections[i].id);
-      if (!el) continue;
-      const rect = el.getBoundingClientRect();
-      if (rect.top <= threshold) {
-        setActiveIndex(i);
-        break;
+      nextIndex = sections.length - 1;
+    } else {
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i].id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= threshold) {
+          nextIndex = i;
+          break;
+        }
       }
     }
+
+    if (nextIndex !== activeIndexRef.current) {
+      activeIndexRef.current = nextIndex;
+      setActiveIndex(nextIndex);
+    }
   }, []);
+
+  const handleScroll = useCallback(() => {
+    if (rafRef.current !== null) return;
+    rafRef.current = window.requestAnimationFrame(() => {
+      rafRef.current = null;
+      updateActiveSection();
+    });
+  }, [updateActiveSection]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafRef.current !== null) {
+        window.cancelAnimationFrame(rafRef.current);
+      }
+    };
   }, [handleScroll]);
 
   const navigableSections = sections.slice(1);
@@ -70,7 +89,6 @@ export function ScrollTracker() {
                 key={section.id}
                 onClick={() => {
                   if (section.id === "contato") {
-                    // Footer is fixed, so scroll to bottom of the page
                     window.scrollTo({
                       top: document.documentElement.scrollHeight,
                       behavior: "smooth",
@@ -85,7 +103,6 @@ export function ScrollTracker() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 + i * 0.1 }}
               >
-                {/* Number */}
                 <span
                   className={`text-sm font-serif transition-all duration-300 ${
                     isActive
@@ -96,7 +113,6 @@ export function ScrollTracker() {
                   {section.number}
                 </span>
 
-                {/* Label — always visible, focused when active */}
                 <span
                   className={`text-sm font-serif italic transition-all duration-300 whitespace-nowrap ${
                     isActive
@@ -111,9 +127,7 @@ export function ScrollTracker() {
           })}
         </div>
 
-        {/* Vertical track line */}
         <div className="relative w-[2px] h-full bg-foreground/10 rounded-full overflow-hidden">
-          {/* Progress fill */}
           <motion.div
             className="absolute top-0 left-0 w-full bg-primary rounded-full"
             style={{ height: fillHeight }}
@@ -121,12 +135,9 @@ export function ScrollTracker() {
         </div>
       </div>
 
-      {/* User indicator */}
       <motion.div
         className="absolute right-0 w-4 h-4 rounded-full bg-primary/90 flex items-center justify-center text-xs font-bold text-primary-foreground shadow-lg shadow-primary/20"
-        style={{
-          top: useTransform(scrollYProgress, [0, 1], ["0%", "100%"]),
-        }}
+        style={{ top: indicatorTop }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{

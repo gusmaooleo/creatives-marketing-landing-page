@@ -8,7 +8,7 @@ import LoadingScreen from "@/components/ui/loading-screen";
 import { ScrollTracker } from "@/components/ui/scroll-tracker";
 import { LinePath } from "@/components/ui/svg-follow-scroll";
 import { useScroll } from "framer-motion";
-import { Suspense, lazy, useCallback, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 
 const Services = lazy(() => import("@/components/sections/Services"));
 const SeparatedServices = lazy(
@@ -19,6 +19,8 @@ const MetaProof = lazy(() => import("@/components/sections/MetaProof"));
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const hasHiddenLoadingRef = useRef(false);
+  const loadingTimeoutRef = useRef<number | null>(null);
 
   const scrollSectionsRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -26,10 +28,36 @@ export default function Home() {
     offset: ["start end", "end start"],
   });
 
-  const handleSplineLoad = useCallback(() => {
-    // Small delay for a smoother transition
-    setTimeout(() => setIsLoading(false), 400);
+  const hideLoadingScreen = useCallback((delayMs: number) => {
+    if (hasHiddenLoadingRef.current) return;
+    hasHiddenLoadingRef.current = true;
+
+    if (loadingTimeoutRef.current !== null) {
+      window.clearTimeout(loadingTimeoutRef.current);
+    }
+
+    loadingTimeoutRef.current = window.setTimeout(() => {
+      setIsLoading(false);
+      loadingTimeoutRef.current = null;
+    }, delayMs);
   }, []);
+
+  useEffect(() => {
+    const fallbackTimeout = window.setTimeout(() => {
+      hideLoadingScreen(0);
+    }, 3500);
+
+    return () => {
+      window.clearTimeout(fallbackTimeout);
+      if (loadingTimeoutRef.current !== null) {
+        window.clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, [hideLoadingScreen]);
+
+  const handleSplineLoad = useCallback(() => {
+    hideLoadingScreen(400);
+  }, [hideLoadingScreen]);
 
   return (
     <>
@@ -41,9 +69,7 @@ export default function Home() {
           <Hero onSplineLoad={handleSplineLoad} />
           <AboutUs />
 
-          {/* Sections spanned by the SVG scroll path */}
           <div ref={scrollSectionsRef} className="relative">
-            {/* SVG follow-scroll line — scoped to these sections only */}
             <div className="absolute top-0 right-0 w-full h-full z-[5] pointer-events-none overflow-hidden hidden lg:block">
               <div className="absolute left-[20%] top-[400px] z-0 pointer-events-none hidden md:block">
                 <LinePath
