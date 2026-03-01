@@ -13,7 +13,6 @@ import { AnimatedHeadline } from "./animated-headline";
 import { MagneticButton } from "./magnetic-button";
 
 const Dithering = lazy(() =>
-  // @ts-expect-error -- Library export is untyped.
   import("@paper-design/shaders-react").then((mod) => ({
     default: mod.Dithering,
   })),
@@ -39,16 +38,25 @@ export function HeroContent({ onSlotReady }: HeroContentProps) {
   const mouseY = useMotionValue(0.5);
   const smoothMouseX = useSpring(mouseX, { stiffness: 220, damping: 25 });
   const smoothMouseY = useSpring(mouseY, { stiffness: 220, damping: 25 });
-  const offsetX = useTransform(smoothMouseX, (value) => `${(value - 0.5) * 10}px`);
-  const offsetY = useTransform(smoothMouseY, (value) => `${(value - 0.5) * 10}px`);
+  const offsetX = useTransform(
+    smoothMouseX,
+    (value) => `${(value - 0.5) * 10}px`,
+  );
+  const offsetY = useTransform(
+    smoothMouseY,
+    (value) => `${(value - 0.5) * 10}px`,
+  );
   const heroSlotTransform = useMotionTemplate`translate(${offsetX}, ${offsetY})`;
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    mouseX.set((e.clientX - rect.left) / rect.width);
-    mouseY.set((e.clientY - rect.top) / rect.height);
-  }, [mouseX, mouseY]);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      mouseX.set((e.clientX - rect.left) / rect.width);
+      mouseY.set((e.clientY - rect.top) / rect.height);
+    },
+    [mouseX, mouseY],
+  );
 
   return (
     <div
@@ -66,7 +74,6 @@ export function HeroContent({ onSlotReady }: HeroContentProps) {
       <Suspense fallback={<div className="absolute inset-0 bg-muted/20" />}>
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-30 mix-blend-multiply dark:mix-blend-screen">
           <Dithering
-            // @ts-expect-error -- Dithering props are not fully typed by the library.
             colorBack="#00000000"
             colorFront="#EC4E02"
             shape="warp"

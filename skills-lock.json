@@ -31,6 +31,11 @@
       "sourceType": "github",
       "computedHash": "fc286bef24c7ed9f6d22410ee524b3a83cc38825fb06313d46b5b13a90454135"
     },
+    "supabase-nextjs": {
+      "source": "alinaqi/claude-bootstrap",
+      "sourceType": "github",
+      "computedHash": "b0aa1036e141e62b90e96606bb66385bd7cf086aecadf3ccf6fc8c16aaf039b4"
+    },
     "web-performance-optimization": {
       "source": "sickn33/antigravity-awesome-skills",
       "sourceType": "github",
