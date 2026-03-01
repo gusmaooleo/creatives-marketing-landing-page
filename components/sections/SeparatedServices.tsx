@@ -2,9 +2,8 @@
 
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2, Sparkles, BrainCircuit } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -25,7 +24,7 @@ const Spline = dynamic(() => import("@splinetool/react-spline"), {
 });
 
 import { MiniLandingPage } from "./separated-services/MiniLandingPage";
-import { GrowthChart } from "./separated-services/GrowthChart";
+import { PieChart } from "./separated-services/PieChart";
 import { FloatingFeed } from "./separated-services/FloatingFeed";
 import { AICore } from "./separated-services/AICore";
 import { ServiceRow } from "./separated-services/ServiceRow";
@@ -49,16 +48,18 @@ const splineVariants: any = {
   },
 };
 
-/* ════════════════════════════════════════════════════════
- * MAIN COMPONENT
- * ════════════════════════════════════════════════════════ */
-
 export default function SeparatedServices() {
   const containerRef = useRef<HTMLDivElement>(null);
   const rowsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeSlide, setActiveSlide] = useState(1);
 
+  // GSAP animations for Desktop Bento Grid reveal
   useEffect(() => {
-    // GSAP ScrollTrigger for the rows to slide up nicely as you scroll
+    // Only run GSAP up-reveal on desktop so we don't interfere with mobile horizontal scroll
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    if (!isDesktop) return;
+
     const ctx = gsap.context(() => {
       rowsRef.current.forEach((row, index) => {
         if (!row) return;
@@ -78,9 +79,9 @@ export default function SeparatedServices() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: row,
-              start: "top 85%", // Triggers when the top of the row hits 85% of viewport
+              start: "top 85%",
               end: "top 50%",
-              scrub: 1, // Smooth scrub effect attached to scroll
+              scrub: 1,
             },
           },
         );
@@ -90,11 +91,27 @@ export default function SeparatedServices() {
     return () => ctx.revert();
   }, []);
 
+  // Update mobile active slide index based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollRef.current) {
+        const { scrollLeft, clientWidth } = scrollRef.current;
+        const index = Math.round(scrollLeft / clientWidth) + 1;
+        setActiveSlide(index);
+      }
+    };
+    const scrollEl = scrollRef.current;
+    if (scrollEl) {
+      scrollEl.addEventListener("scroll", handleScroll, { passive: true });
+      return () => scrollEl.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
   return (
     <section
       id="planos"
       ref={containerRef}
-      className="relative overflow-hidden py-24 md:py-36 bg-background"
+      className="relative overflow-hidden pt-24 pb-32 md:pt-36 md:pb-48 bg-background"
     >
       {/* Grid background with vignette */}
       <div
@@ -113,7 +130,7 @@ export default function SeparatedServices() {
         }}
       />
 
-      <div className="relative z-10 container mx-auto px-4 md:px-8 flex flex-col gap-24 md:gap-32">
+      <div className="relative z-10 container mx-auto px-4 md:px-8 flex flex-col gap-32 md:gap-40">
         {/* ROW 0: The original Intro / Spline Hero */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center">
           {/* Left — Text (cols 1-6) */}
@@ -160,7 +177,7 @@ export default function SeparatedServices() {
             viewport={{ once: true, margin: "-80px" }}
             variants={splineVariants}
           >
-            <div className="relative rounded-3xl overflow-hidden border border-border/10 bg-foreground/[0.02] dark:bg-foreground/[0.03] backdrop-blur-sm aspect-square md:aspect-[4/3]">
+            <div className="relative rounded-3xl overflow-hidden border border-border/10 bg-foreground/[0.02] dark:bg-foreground/[0.03] backdrop-blur-sm aspect-[4/3]">
               {/* Glow accent */}
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
@@ -186,146 +203,193 @@ export default function SeparatedServices() {
         </div>
 
         {/* ════════════════════════════════════════════════════════
-         * ROW 1: Landing Pages (Visual Left, Card Right)
+         * BENTO GRID & MOBILE CAROUSEL
          * ════════════════════════════════════════════════════════ */}
-        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {(isActive) => (
-            <>
-              <div
-                ref={(el) => {
-                  rowsRef.current[0] = el;
-                }}
-                className="lg:col-span-6 order-2 lg:order-1 h-full min-h-[350px]"
-              >
-                <MiniLandingPage />
-              </div>
-              <div className="lg:col-span-6 order-1 lg:order-2">
-                <PricingWrapper
-                  contactHref="#contato"
-                  type="waves"
-                  isActive={isActive}
-                >
-                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
-                    01. Presença Digital
-                  </span>
-                  <Heading>Performance que converte. Design que retém.</Heading>
-                  <Paragraph>
-                    Landing pages e sites institucionais otimizados para
-                    velocidade, conversão e acessibilidade. Seu negócio com a
-                    melhor vitrine.
-                  </Paragraph>
-                </PricingWrapper>
-              </div>
-            </>
-          )}
-        </ServiceRow>
+        <div className="relative">
+          {/* Mobile Pagination Counter */}
+          <div className="md:hidden absolute -top-16 right-0 border border-border/10 rounded-full px-4 py-1.5 backdrop-blur-sm bg-background/50 flex flex-col items-center">
+            <span className="font-serif italic text-primary font-bold text-lg leading-none">
+              {activeSlide.toString().padStart(2, "0")}
+            </span>
+            <span className="text-[10px] text-foreground/40 uppercase tracking-widest leading-none">
+              de 04
+            </span>
+          </div>
 
-        {/* ════════════════════════════════════════════════════════
-         * ROW 2: Paid Traffic (Card Left, Visual Right)
-         * ════════════════════════════════════════════════════════ */}
-        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {(isActive) => (
-            <>
-              <div
-                ref={(el) => {
-                  rowsRef.current[1] = el;
-                }}
-                className="lg:col-span-6 order-1"
-              >
-                <PricingWrapper
-                  contactHref="#contato"
-                  type="crosses"
-                  isActive={isActive}
-                >
-                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
-                    02. Escala
-                  </span>
-                  <Heading>Tráfego pago com foco em ROI real.</Heading>
-                  <Paragraph>
-                    Gestão inteligente de campanhas no Google Ads e Meta Ads.
-                    Investimos onde o retorno é mensurável, escalando suas
-                    vendas com dados.
-                  </Paragraph>
-                </PricingWrapper>
-              </div>
-              <div className="lg:col-span-6 order-2 h-full min-h-[350px]">
-                <GrowthChart />
-              </div>
-            </>
-          )}
-        </ServiceRow>
+          <div
+            ref={scrollRef}
+            className="flex md:grid md:grid-cols-12 gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none hide-scrollbar pt-4 pb-8 md:py-0 -mx-4 px-4 md:mx-0 md:px-0"
+          >
+            {/* ROW 1: Landing Pages (8-col) + Paid Traffic (4-col) */}
 
-        {/* ════════════════════════════════════════════════════════
-         * ROW 3: Social Media (Visual Left, Card Right)
-         * ════════════════════════════════════════════════════════ */}
-        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {(isActive) => (
-            <>
-              <div
-                ref={(el) => {
-                  rowsRef.current[2] = el;
-                }}
-                className="lg:col-span-6 order-2 lg:order-1 h-full min-h-[350px]"
-              >
-                <FloatingFeed />
-              </div>
-              <div className="lg:col-span-6 order-1 lg:order-2">
-                <PricingWrapper
-                  contactHref="#contato"
-                  type="waves"
-                  isActive={isActive}
+            {/* Landing Pages */}
+            <ServiceRow className="w-[85vw] md:w-auto shrink-0 snap-center snap-always md:col-span-8 flex">
+              {(isActive) => (
+                <div
+                  ref={(el) => {
+                    rowsRef.current[0] = el;
+                  }}
+                  className="w-full h-full"
                 >
-                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
-                    03. Comunidade
-                  </span>
-                  <Heading>
-                    Estratégias de conteúdo focadas em criar autoridade.
-                  </Heading>
-                  <Paragraph>
-                    Planejamento, roteiro e edição. Muito além de posts bonitos:
-                    criamos narrativas que conectam sua marca a quem importa.
-                  </Paragraph>
-                </PricingWrapper>
-              </div>
-            </>
-          )}
-        </ServiceRow>
+                  <PricingWrapper
+                    contactHref="#contato"
+                    type="waves"
+                    isActive={isActive}
+                    buttonText="Orçamento"
+                  >
+                    <div className="flex flex-col lg:flex-row gap-8 w-full h-full">
+                      <div className="flex flex-col gap-6 lg:w-1/2 justify-center">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                          01. Presença Digital
+                        </span>
+                        <Heading>
+                          Performance que converte. Design que retém.
+                        </Heading>
+                        <Paragraph>
+                          Landing pages e sites institucionais otimizados para
+                          velocidade, conversão e acessibilidade. Seu negócio
+                          com a melhor vitrine.
+                        </Paragraph>
+                      </div>
+                      <div className="lg:w-1/2 w-full min-h-[250px] relative mt-4 lg:mt-0">
+                        <div className="absolute inset-0 scale-[1.1] transform-gpu">
+                          <MiniLandingPage />
+                        </div>
+                      </div>
+                    </div>
+                  </PricingWrapper>
+                </div>
+              )}
+            </ServiceRow>
 
-        {/* ════════════════════════════════════════════════════════
-         * ROW 4: AI Integrations (Card Left, Visual Right)
-         * ════════════════════════════════════════════════════════ */}
-        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {(isActive) => (
-            <>
-              <div
-                ref={(el) => {
-                  rowsRef.current[3] = el;
-                }}
-                className="lg:col-span-6 order-1"
-              >
-                <PricingWrapper
-                  contactHref="#contato"
-                  type="crosses"
-                  isActive={isActive}
+            {/* Paid Traffic */}
+            <ServiceRow className="w-[85vw] md:w-auto shrink-0 snap-center snap-always md:col-span-4 flex">
+              {(isActive) => (
+                <div
+                  ref={(el) => {
+                    rowsRef.current[1] = el;
+                  }}
+                  className="w-full h-full"
                 >
-                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
-                    04. Futuro
-                  </span>
-                  <Heading>Automação e IA no núcleo do seu negócio.</Heading>
-                  <Paragraph>
-                    Atendimento automático 24/7 via WhatsApp, CRM integrado e
-                    bots inteligentes. Reduza custos operacionais enquanto vende
-                    mais.
-                  </Paragraph>
-                </PricingWrapper>
-              </div>
-              <div className="lg:col-span-6 order-2 h-full min-h-[350px]">
-                <AICore />
-              </div>
-            </>
-          )}
-        </ServiceRow>
+                  <PricingWrapper
+                    contactHref="#contato"
+                    type="crosses"
+                    isActive={isActive}
+                    buttonText=""
+                  >
+                    <div className="flex flex-col gap-6 h-full justify-between">
+                      <div className="flex flex-col gap-6">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                          02. Escala
+                        </span>
+                        <Heading>Tráfego pago com foco em ROI real.</Heading>
+                        <Paragraph>
+                          Investimos onde o retorno é mensurável, escalando
+                          vendas com dados.
+                        </Paragraph>
+                      </div>
+                      <div className="w-full h-48 relative mt-6 rounded-[1.5rem] overflow-hidden flex items-center justify-center">
+                        <PieChart />
+                      </div>
+                    </div>
+                  </PricingWrapper>
+                </div>
+              )}
+            </ServiceRow>
+
+            {/* ROW 2: Social Media (12-col Feature Section) */}
+            <ServiceRow className="w-[85vw] md:w-auto shrink-0 snap-center snap-always md:col-span-12 flex">
+              {(isActive) => (
+                <div
+                  ref={(el) => {
+                    rowsRef.current[2] = el;
+                  }}
+                  className="w-full h-full"
+                >
+                  <PricingWrapper
+                    contactHref="#contato"
+                    type="waves"
+                    isActive={isActive}
+                    buttonText="Falar com especialista"
+                  >
+                    <div className="flex flex-col md:flex-row gap-12 w-full h-full items-center">
+                      <div className="md:w-[45%] w-full h-64 md:h-full min-h-[300px] relative rounded-[2rem] overflow-hidden -ml-4 md:-ml-8 -mt-4 md:-mt-8 mb-4 md:-mb-8 -mr-4 md:mr-0 order-2 md:order-1">
+                        <div className="absolute inset-0 w-full h-full scale-[1.05]">
+                          <FloatingFeed />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-6 md:w-[55%] justify-center order-1 md:order-2">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                          03. Comunidade
+                        </span>
+                        <Heading>
+                          Estratégias de conteúdo focadas em criar autoridade.
+                        </Heading>
+                        <Paragraph>
+                          Planejamento, roteiro e edição. Muito além de posts
+                          bonitos: criamos narrativas que conectam sua marca a
+                          quem importa.
+                        </Paragraph>
+                      </div>
+                    </div>
+                  </PricingWrapper>
+                </div>
+              )}
+            </ServiceRow>
+
+            {/* ROW 3: AI Integrations (12-col Feature Section) */}
+            <ServiceRow className="w-[85vw] md:w-auto shrink-0 snap-center snap-always md:col-span-12 flex">
+              {(isActive) => (
+                <div
+                  ref={(el) => {
+                    rowsRef.current[3] = el;
+                  }}
+                  className="w-full h-full"
+                >
+                  <PricingWrapper
+                    contactHref="#contato"
+                    type="crosses"
+                    isActive={isActive}
+                    buttonText="Implementar automação"
+                  >
+                    <div className="flex flex-col md:flex-row gap-12 w-full h-full items-center">
+                      <div className="flex flex-col gap-6 md:w-[50%] justify-center">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                          04. Futuro
+                        </span>
+                        <Heading>
+                          Automação e IA no núcleo do seu negócio.
+                        </Heading>
+                        <Paragraph>
+                          Atendimento automático 24/7 via WhatsApp, CRM
+                          integrado e bots inteligentes. Reduza custos
+                          operacionais enquanto vende mais.
+                        </Paragraph>
+                      </div>
+                      <div className="md:w-[50%] w-full h-64 md:h-[400px] min-h-[300px] relative rounded-[2rem] overflow-hidden -mx-4 md:mx-0 -mt-4 md:mt-0 mb-4 md:mb-0 flex items-center justify-center">
+                        <div className="relative w-full h-full flex items-center justify-center scale-75 md:scale-100">
+                          <AICore />
+                        </div>
+                      </div>
+                    </div>
+                  </PricingWrapper>
+                </div>
+              )}
+            </ServiceRow>
+          </div>
+        </div>
       </div>
+      {/* Hide scrollbar for Chrome, Safari and Opera */}
+      <style jsx global>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .hide-scrollbar {
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+      `}</style>
     </section>
   );
 }

@@ -5,12 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Check, Star, Sparkles } from "lucide-react";
+import { Check, Star, Sparkles, Info } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import confetti from "canvas-confetti";
 import NumberFlow from "@number-flow/react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface PricingPlan {
   name: string;
@@ -182,6 +183,22 @@ export function Pricing({
                 </p>
 
                 {/* Price */}
+                {!plan.isCustom && (
+                  <div className="text-xs text-muted-foreground/40 -mb-1 flex flex-row items-center gap-1">
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-3 w-3" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          O valor é aproximado e pode variar de acordo com a
+                          demanda.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <p>cerca de:</p>
+                  </div>
+                )}
                 <div className="flex items-baseline gap-x-1 mb-1">
                   <span className="text-4xl md:text-5xl font-bold tracking-tight text-foreground tabular-nums">
                     {plan.isCustom ? (

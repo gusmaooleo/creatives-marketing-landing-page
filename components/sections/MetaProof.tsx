@@ -149,7 +149,7 @@ export default function MetaProof() {
                 asChild
               >
                 <a href="#contato">
-                  Quero essa performance no meu negócio
+                  Entrar em contato
                   <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </a>
               </Button>

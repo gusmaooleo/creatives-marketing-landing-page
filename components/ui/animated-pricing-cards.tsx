@@ -51,24 +51,24 @@ export const PricingWrapper: React.FC<{
 }) => (
   <article
     className={cn(
-      "min-h-[300px] h-full w-full bg-foreground/[0.02] dark:bg-foreground/[0.03] backdrop-blur-sm relative overflow-hidden rounded-3xl text-foreground flex flex-col transition-all duration-700 ease-out",
+      "h-full w-full bg-foreground/[0.02] dark:bg-foreground/[0.03] backdrop-blur-sm relative overflow-hidden rounded-[2rem] text-foreground flex flex-col transition-all duration-700 ease-out",
       isActive
-        ? "border-2 border-primary/50 shadow-2xl shadow-primary/10 scale-[1.03] bg-foreground/[0.04] dark:bg-foreground/[0.05]"
+        ? "border-2 border-primary/50 shadow-2xl shadow-primary/10 scale-[1.01] bg-foreground/[0.04] dark:bg-foreground/[0.05]"
         : "border border-border/10 scale-100 hover:bg-foreground/[0.04]",
       className,
     )}
   >
-    <div className="w-full h-full relative z-[2] p-8 md:p-10 flex flex-col justify-between gap-8 isolate">
-      <div className="flex flex-col items-start justify-start gap-6">
-        {children}
-      </div>
-      <div className="w-full flex items-end justify-start mt-auto">
-        <Link href={contactHref} className="w-fit">
-          <button className="h-12 px-8 bg-primary rounded-full text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20 hover:scale-[1.03]">
-            {buttonText}
-          </button>
-        </Link>
-      </div>
+    <div className="w-full h-full relative z-[2] p-8 md:p-12 flex flex-col justify-between isolate">
+      {children}
+      {buttonText && (
+        <div className="w-full flex items-end justify-start mt-auto pt-8">
+          <Link href={contactHref} className="w-fit">
+            <button className="h-12 px-8 bg-primary rounded-full text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20 hover:scale-[1.03]">
+              {buttonText}
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
 
     {type === "waves" && (
