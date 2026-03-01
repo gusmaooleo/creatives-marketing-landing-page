@@ -1,6 +1,7 @@
 "use client";
 
 import AboutUs from "@/components/sections/AboutUs";
+import Footer from "@/components/sections/Footer";
 import Hero from "@/components/sections/Hero";
 import { Header } from "@/components/ui/header";
 import LoadingScreen from "@/components/ui/loading-screen";
@@ -76,6 +77,7 @@ export default function Home() {
             </div>
           </div>
         </main>
+        <Footer />
         <ScrollTracker />
       </div>
     </>

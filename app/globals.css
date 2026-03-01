@@ -47,41 +47,41 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
   @keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-2px);
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
     }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
   @keyframes waves {
-  0% {
-    transform: translateY(-170px);
+    0% {
+      transform: translateY(-170px);
     }
-  100% {
-    transform: translateY(0);
+    100% {
+      transform: translateY(0);
     }
   }
 }
 
 :root {
   --radius: 0.625rem;
-  --background: #FFF3DB !important; /* cream - off white */
-  --foreground: #211F1A !important; /* warm darkgray */
-  --card: #F0F0F0; /* white tone */
-  --card-foreground: #211F1A;
-  --popover: #F0F0F0;
-  --popover-foreground: #211F1A;
-  --primary: #F4AA41; /* warm orange */
-  --primary-foreground: #FFF3DB; /* inverted for contrast */
-  --secondary: #FFE8C8; /* light orange */
-  --secondary-foreground: #211F1A;
-  --muted: #AA9B86; /* clay */
-  --muted-foreground: #211F1A;
-  --accent: #FFD497; /* pastel orange */
-  --accent-foreground: #211F1A;
+  --background: #fff3db !important; /* cream - off white */
+  --foreground: #211f1a !important; /* warm darkgray */
+  --card: #f0f0f0; /* white tone */
+  --card-foreground: #211f1a;
+  --popover: #f0f0f0;
+  --popover-foreground: #211f1a;
+  --primary: #f4aa41; /* warm orange */
+  --primary-foreground: #fff3db; /* inverted for contrast */
+  --secondary: #ffe8c8; /* light orange */
+  --secondary-foreground: #211f1a;
+  --muted: #aa9b86; /* clay */
+  --muted-foreground: #211f1a;
+  --accent: #ffd497; /* pastel orange */
+  --accent-foreground: #211f1a;
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -102,20 +102,20 @@
 }
 
 .dark {
-  --background: #211F1A !important; /* warm darkgray */
-  --foreground: #FFF3DB !important; /* cream - off white */
-  --card: #1C1C1C; /* black tone */
-  --card-foreground: #FFF3DB;
-  --popover: #1C1C1C;
-  --popover-foreground: #FFF3DB;
-  --primary: #F4AA41; /* warm orange */
-  --primary-foreground: #211F1A; /* inverted for contrast */
-  --secondary: #996F33; /* pastel dark brown */
-  --secondary-foreground: #FFF3DB;
-  --muted: #1C1C1C; /* black tone */
-  --muted-foreground: #AA9B86; /* clay (good for muted text) */
+  --background: #211f1a !important; /* warm darkgray */
+  --foreground: #fff3db !important; /* cream - off white */
+  --card: #1c1c1c; /* black tone */
+  --card-foreground: #fff3db;
+  --popover: #1c1c1c;
+  --popover-foreground: #fff3db;
+  --primary: #f4aa41; /* warm orange */
+  --primary-foreground: #211f1a; /* inverted for contrast */
+  --secondary: #996f33; /* pastel dark brown */
+  --secondary-foreground: #fff3db;
+  --muted: #1c1c1c; /* black tone */
+  --muted-foreground: #aa9b86; /* clay (good for muted text) */
   --accent: #915706; /* brown */
-  --accent-foreground: #FFF3DB;
+  --accent-foreground: #fff3db;
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
@@ -141,5 +141,42 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* ── Fluid Typography ── */
+:root {
+  --fluid-3xl: clamp(1.875rem, 1.5rem + 1.5vw, 2.25rem);
+  --fluid-4xl: clamp(2.25rem, 1.8rem + 2vw, 3rem);
+  --fluid-5xl: clamp(2.75rem, 2rem + 3vw, 3.75rem);
+  --fluid-6xl: clamp(3.25rem, 2.2rem + 4.5vw, 4.5rem);
+  --fluid-hero: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+}
+
+/* ── Premium kerning for special words ── */
+.tracking-premium-italic {
+  letter-spacing: -0.02em;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1;
+}
+
+.tracking-premium-bold {
+  letter-spacing: -0.01em;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1;
+}
+
+/* ── Pulsing glow keyframe ── */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
   }
 }

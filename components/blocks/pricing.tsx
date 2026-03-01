@@ -22,6 +22,7 @@ interface PricingPlan {
   buttonText: string;
   href: string;
   isPopular: boolean;
+  isCustom?: boolean;
 }
 
 interface PricingProps {
@@ -183,27 +184,31 @@ export function Pricing({
                 {/* Price */}
                 <div className="flex items-baseline gap-x-1 mb-1">
                   <span className="text-4xl md:text-5xl font-bold tracking-tight text-foreground tabular-nums">
-                    <NumberFlow
-                      value={
-                        isMonthly
-                          ? Number(plan.price)
-                          : Number(plan.yearlyPrice)
-                      }
-                      format={{
-                        style: "currency",
-                        currency: "BRL",
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      }}
-                      transformTiming={{
-                        duration: 500,
-                        easing: "ease-out",
-                      }}
-                      willChange
-                      className="tabular-nums"
-                    />
+                    {plan.isCustom ? (
+                      plan.price
+                    ) : (
+                      <NumberFlow
+                        value={
+                          isMonthly
+                            ? Number(plan.price)
+                            : Number(plan.yearlyPrice)
+                        }
+                        format={{
+                          style: "currency",
+                          currency: "BRL",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }}
+                        transformTiming={{
+                          duration: 500,
+                          easing: "ease-out",
+                        }}
+                        willChange
+                        className="tabular-nums"
+                      />
+                    )}
                   </span>
-                  {plan.period !== "sob consulta" && (
+                  {plan.period !== "sob consulta" && !plan.isCustom && (
                     <span className="text-sm font-medium text-muted-foreground/60">
                       /{plan.period}
                     </span>
@@ -211,7 +216,11 @@ export function Pricing({
                 </div>
 
                 <p className="text-xs text-muted-foreground/40 mb-6">
-                  {isMonthly ? "cobrado mensalmente" : "cobrado anualmente"}
+                  {plan.isCustom
+                    ? "\u00A0"
+                    : isMonthly
+                      ? "cobrado mensalmente"
+                      : "cobrado anualmente"}
                 </p>
 
                 {/* Features */}

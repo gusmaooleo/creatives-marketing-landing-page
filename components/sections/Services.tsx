@@ -67,9 +67,9 @@ const plans = [
   },
   {
     name: "Enterprise",
-    price: "4997",
-    yearlyPrice: "3997",
-    period: "mês",
+    price: "Custom",
+    yearlyPrice: "Custom",
+    period: "sob consulta",
     features: [
       "Tudo dos outros planos",
       "Soluções sob medida",
@@ -82,6 +82,7 @@ const plans = [
     buttonText: "Fale Conosco",
     href: "#contato",
     isPopular: false,
+    isCustom: true,
   },
 ];
 

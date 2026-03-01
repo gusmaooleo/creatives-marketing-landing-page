@@ -1,9 +1,9 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
-import { useState, Suspense, lazy } from "react";
+import { useState, Suspense, lazy, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { AnimatedHeadline } from "./animated-headline";
+import { MagneticButton } from "./magnetic-button";
 
 const Dithering = lazy(() =>
   // @ts-ignore
@@ -23,12 +23,28 @@ const fadeUpVariants: any = {
 
 export function HeroContent() {
   const [isHovered, setIsHovered] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height,
+    });
+  }, []);
 
   return (
     <div
+      ref={containerRef}
       className="relative w-full h-full overflow-hidden rounded-[32px] md:rounded-[48px] border border-border/30"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setMousePos({ x: 0.5, y: 0.5 });
+      }}
+      onMouseMove={handleMouseMove}
     >
       {/* Dithering Background — fills the entire container */}
       <Suspense fallback={<div className="absolute inset-0 bg-muted/20" />}>
@@ -49,7 +65,7 @@ export function HeroContent() {
       {/* Grid: Text Left + 3D Right */}
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-0 h-full lg:-mb-20">
         {/* Left side: Text content — spans 5 columns */}
-        <div className="col-span-1 md:col-span-5 flex flex-col justify-center px-8 md:px-12 lg:px-16 py-12 md:py-16">
+        <div className="col-span-1 md:col-span-6 flex flex-col justify-center px-4 md:px-8 py-12 md:py-16">
           {/* Badge */}
           <motion.div
             className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm w-fit"
@@ -72,7 +88,7 @@ export function HeroContent() {
 
           {/* Description */}
           <motion.p
-            className="text-muted-foreground text-base md:text-lg lg:text-xl max-w-lg mb-10 leading-relaxed"
+            className="text-foreground/60 font-light text-base md:text-lg lg:text-xl max-w-lg mb-10 leading-relaxed"
             variants={fadeUpVariants}
             initial="hidden"
             animate="visible"
@@ -88,17 +104,22 @@ export function HeroContent() {
             initial="hidden"
             animate="visible"
             custom={1.2}
+            className="-ml-[50px]"
           >
-            <button className="group relative inline-flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full bg-primary px-10 md:px-12 text-base font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:scale-105 active:scale-95 hover:ring-4 hover:ring-primary/20">
-              <span className="relative z-10">Quero escalar meu negócio</span>
-              <ArrowRight className="h-5 w-5 relative z-10 transition-transform duration-300 group-hover:translate-x-1" />
-            </button>
+            <MagneticButton>Quero escalar meu negócio</MagneticButton>
           </motion.div>
         </div>
 
-        {/* Right side: 3D Spline animation — spans 7 columns */}
-        <div className="hidden md:block col-span-1 md:col-span-7 relative min-h-[500px] lg:min-h-[1000px]">
-          <div id="hero-3d-slot" className="absolute inset-0" />
+        {/* Right side: 3D Spline animation — spans 6 columns */}
+        <div className="hidden md:block col-span-1 md:col-span-6 relative min-h-[500px] lg:min-h-[1000px]">
+          {/* Pulsing orange glow behind 3D phone */}
+          <div
+            id="hero-3d-slot"
+            className="absolute inset-0 z-10 will-change-transform transition-transform duration-200 ease-out"
+            style={{
+              transform: `translate(${(mousePos.x - 0.5) * 10}px, ${(mousePos.y - 0.5) * 10}px)`,
+            }}
+          />
         </div>
       </div>
     </div>

@@ -92,6 +92,7 @@ export default function SeparatedServices() {
 
   return (
     <section
+      id="planos"
       ref={containerRef}
       className="relative overflow-hidden py-24 md:py-36 bg-background"
     >

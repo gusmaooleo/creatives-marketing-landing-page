@@ -47,7 +47,8 @@ const specialWordVariants: any = {
 export function AnimatedHeadline() {
   return (
     <motion.h2
-      className="font-sans text-3xl md:text-4xl lg:text-5xl xl:text-6xl tracking-tight text-foreground leading-[1.1]"
+      className="font-serif font-semibold tracking-tight text-foreground leading-[1.08]"
+      style={{ fontSize: "var(--fluid-hero)" }}
       initial="hidden"
       animate="visible"
       variants={lineVariants}
@@ -64,7 +65,7 @@ export function AnimatedHeadline() {
           em&nbsp;
         </motion.span>
         <motion.span
-          className="inline-block text-foreground/80 font-serif italic"
+          className="inline-block text-foreground font-serif italic tracking-premium-italic"
           variants={specialWordVariants}
         >
           lucro
@@ -83,7 +84,7 @@ export function AnimatedHeadline() {
           em&nbsp;
         </motion.span>
         <motion.span
-          className="inline-block text-foreground/80 font-bold"
+          className="inline-block text-foreground font-bold tracking-premium-bold"
           variants={specialWordVariants}
         >
           autoridade
