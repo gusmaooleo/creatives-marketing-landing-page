@@ -1,18 +1,19 @@
 "use client";
 
-import { Suspense, lazy, useRef, useState, useCallback } from "react";
-import { useScroll } from "framer-motion";
-import { Header } from "@/components/ui/header";
-import Hero from "@/components/sections/Hero";
 import AboutUs from "@/components/sections/AboutUs";
+import Hero from "@/components/sections/Hero";
+import { Header } from "@/components/ui/header";
+import LoadingScreen from "@/components/ui/loading-screen";
 import { ScrollTracker } from "@/components/ui/scroll-tracker";
 import { LinePath } from "@/components/ui/svg-follow-scroll";
-import LoadingScreen from "@/components/ui/loading-screen";
+import { useScroll } from "framer-motion";
+import { Suspense, lazy, useCallback, useRef, useState } from "react";
 
 const Services = lazy(() => import("@/components/sections/Services"));
 const SeparatedServices = lazy(
   () => import("@/components/sections/SeparatedServices"),
 );
+const Hook = lazy(() => import("@/components/sections/Hook"));
 const MetaProof = lazy(() => import("@/components/sections/MetaProof"));
 
 export default function Home() {
@@ -53,15 +54,26 @@ export default function Home() {
               </div>
             </div>
 
-            <Suspense fallback={null}>
-              <Services />
-            </Suspense>
-            <Suspense fallback={null}>
-              <SeparatedServices />
-            </Suspense>
-            <Suspense fallback={null}>
-              <MetaProof />
-            </Suspense>
+            <div className="relative">
+              <Suspense fallback={null}>
+                <Services />
+              </Suspense>
+            </div>
+            <div className="relative">
+              <Suspense fallback={null}>
+                <SeparatedServices />
+              </Suspense>
+            </div>
+            <div className="relative">
+              <Suspense fallback={null}>
+                <Hook />
+              </Suspense>
+            </div>
+            <div className="relative">
+              <Suspense fallback={null}>
+                <MetaProof />
+              </Suspense>
+            </div>
           </div>
         </main>
         <ScrollTracker />
