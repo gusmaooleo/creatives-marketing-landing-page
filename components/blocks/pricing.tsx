@@ -251,17 +251,18 @@ export function Pricing({
                   ))}
                 </ul>
 
-                {/* CTA */}
                 <Link
                   href={plan.href}
                   className={cn(
-                    buttonVariants({ variant: "outline" }),
+                    "inline-flex items-center justify-center whitespace-nowrap rounded-md h-9 px-4 py-2",
                     "w-full gap-2 text-sm font-semibold tracking-tight",
                     "transition-all duration-300 ease-out",
                     "hover:ring-2 hover:ring-primary hover:ring-offset-1 hover:bg-primary hover:text-primary-foreground",
+                    "hover:-translate-y-0.5 active:scale-95 will-change-transform shadow-sm",
+                    "ring-offset-background hover:ring-2 hover:ring-primary hover:ring-offset-[1.5px]",
                     plan.isPopular
-                      ? "bg-primary text-primary-foreground border-primary/30"
-                      : "bg-foreground/[0.03] border-border/20 text-foreground hover:border-primary/30",
+                      ? "bg-primary text-primary-foreground border border-primary/30 shadow-primary/20 hover:shadow-primary/40 dark:bg-primary dark:text-primary-foreground"
+                      : "bg-foreground/[0.03] border border-border/20 text-foreground dark:bg-foreground/[0.05] dark:text-foreground",
                   )}
                 >
                   {plan.isPopular && (

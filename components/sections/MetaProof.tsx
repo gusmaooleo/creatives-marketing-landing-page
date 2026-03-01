@@ -148,7 +148,7 @@ export default function MetaProof() {
                 className="group rounded-full px-10 py-6 text-base font-semibold gap-2.5 bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/25 transition-all duration-300 hover:scale-[1.03] uppercase tracking-wider"
                 asChild
               >
-                <a href="#contato">
+                <a href="/contato">
                   Entrar em contato
                   <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
                 </a>

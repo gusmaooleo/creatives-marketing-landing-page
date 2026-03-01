@@ -93,13 +93,13 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({
                 Contact
               </span>
               <a
-                href="mailto:info@creativesmarketing.com"
+                href="mailto:creativesmarketingsa@gmail.com"
                 className="hover:underline"
               >
-                hi@creativesmarketing.com
+                creativesmarketingsa@gmail.com
               </a>
               <a href="tel:+5511999999999" className="hover:underline mt-1">
-                +55 (11) 99999-9999
+                +55 (71) 99999-9999
               </a>
             </div>
 

@@ -106,7 +106,9 @@ export default function SeparatedServices() {
   useEffect(() => {
     const scrollEl = scrollRef.current;
     if (scrollEl) {
-      scrollEl.addEventListener("scroll", handleMobileScroll, { passive: true });
+      scrollEl.addEventListener("scroll", handleMobileScroll, {
+        passive: true,
+      });
       handleMobileScroll();
       return () => scrollEl.removeEventListener("scroll", handleMobileScroll);
     }
@@ -240,7 +242,7 @@ export default function SeparatedServices() {
                   className="w-full h-full"
                 >
                   <PricingWrapper
-                    contactHref="#contato"
+                    contactHref="/orcamento"
                     type="waves"
                     isActive={isActive}
                     buttonText="Orçamento"
@@ -280,7 +282,7 @@ export default function SeparatedServices() {
                   className="w-full h-full"
                 >
                   <PricingWrapper
-                    contactHref="#contato"
+                    contactHref="/contato"
                     type="crosses"
                     isActive={isActive}
                     buttonText=""
@@ -315,7 +317,7 @@ export default function SeparatedServices() {
                   className="w-full h-full"
                 >
                   <PricingWrapper
-                    contactHref="#contato"
+                    contactHref="/contato"
                     type="waves"
                     isActive={isActive}
                     buttonText="Falar com especialista"
@@ -355,7 +357,7 @@ export default function SeparatedServices() {
                   className="w-full h-full"
                 >
                   <PricingWrapper
-                    contactHref="#contato"
+                    contactHref="/contato"
                     type="crosses"
                     isActive={isActive}
                     buttonText="Implementar automação"

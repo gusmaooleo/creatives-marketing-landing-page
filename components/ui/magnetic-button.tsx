@@ -3,6 +3,7 @@
 import { useRef, useCallback, useState } from "react";
 import { gsap } from "gsap";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 interface MagneticButtonProps {
   children: React.ReactNode;
@@ -63,20 +64,22 @@ export function MagneticButton({
       className="inline-block"
       style={{ padding: MAGNETIC_RADIUS }}
     >
-      <button
-        ref={buttonRef}
-        onClick={onClick}
-        className={`group relative inline-flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full bg-primary px-10 md:px-12 text-base font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 active:scale-95 will-change-transform ${
-          isHovered ? "shadow-[0_0_24px_rgba(244,170,65,0.3)] scale-105" : ""
-        } ${className}`}
-      >
-        <span className="relative z-10">{children}</span>
-        <ArrowRight
-          className={`h-5 w-5 relative z-10 transition-transform duration-300 ${
-            isHovered ? "translate-x-1" : "translate-x-0"
-          }`}
-        />
-      </button>
+      <Link href="/orcamento">
+        <button
+          ref={buttonRef}
+          onClick={onClick}
+          className={`cursor-pointer group relative inline-flex h-14 items-center justify-center gap-3 overflow-hidden rounded-full bg-primary px-10 md:px-12 text-base font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 active:scale-95 will-change-transform ${
+            isHovered ? "shadow-[0_0_24px_rgba(244,170,65,0.3)] scale-105" : ""
+          } ${className}`}
+        >
+          <span className="relative z-10">{children}</span>
+          <ArrowRight
+            className={`h-5 w-5 relative z-10 transition-transform duration-300 ${
+              isHovered ? "translate-x-1" : "translate-x-0"
+            }`}
+          />
+        </button>
+      </Link>
     </div>
   );
 }
