@@ -12,25 +12,35 @@ interface Section {
 const sections: Section[] = [
   { id: "hero", label: "", number: "" },
   { id: "sobre-nos", label: "sobre nós", number: "01" },
-  { id: "parceiros", label: "parceiros", number: "02" },
-  { id: "services", label: "serviços", number: "03" },
-  { id: "planos", label: "planos", number: "04" },
-  { id: "contato", label: "contato", number: "05" },
+  { id: "services", label: "serviços", number: "02" },
+  { id: "planos", label: "planos", number: "03" },
+  { id: "contato", label: "contato", number: "04" },
 ];
 
 export function ScrollTracker() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { scrollYProgress } = useScroll();
 
   const fillHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   const handleScroll = useCallback(() => {
-    const scrollY = window.scrollY + window.innerHeight / 3;
+    const threshold = window.innerHeight / 3;
+
+    // If user is near the bottom of the page, activate "contato" (last section)
+    const atBottom =
+      window.scrollY + window.innerHeight >=
+      document.documentElement.scrollHeight - 100;
+
+    if (atBottom) {
+      setActiveIndex(sections.length - 1);
+      return;
+    }
 
     for (let i = sections.length - 1; i >= 0; i--) {
       const el = document.getElementById(sections[i].id);
-      if (el && scrollY >= el.offsetTop) {
+      if (!el) continue;
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= threshold) {
         setActiveIndex(i);
         break;
       }
@@ -54,18 +64,23 @@ export function ScrollTracker() {
           {navigableSections.map((section, i) => {
             const realIndex = i + 1;
             const isActive = activeIndex === realIndex;
-            const isHovered = hoveredIndex === realIndex;
 
             return (
               <motion.button
                 key={section.id}
                 onClick={() => {
-                  const el = document.getElementById(section.id);
-                  el?.scrollIntoView({ behavior: "smooth" });
+                  if (section.id === "contato") {
+                    // Footer is fixed, so scroll to bottom of the page
+                    window.scrollTo({
+                      top: document.documentElement.scrollHeight,
+                      behavior: "smooth",
+                    });
+                  } else {
+                    const el = document.getElementById(section.id);
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }
                 }}
-                onMouseEnter={() => setHoveredIndex(realIndex)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className="flex items-baseline gap-2 text-right transition-all duration-500 cursor-pointer"
+                className="flex items-baseline gap-2 text-right transition-all duration-500 cursor-pointer group"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 + i * 0.1 }}
@@ -75,19 +90,19 @@ export function ScrollTracker() {
                   className={`text-sm font-serif transition-all duration-300 ${
                     isActive
                       ? "text-primary font-bold"
-                      : "text-foreground/30 font-normal"
+                      : "text-foreground/20 font-normal group-hover:text-foreground/40"
                   }`}
                 >
                   {section.number}
                 </span>
 
-                {/* Label — revealed on hover or when active */}
+                {/* Label — always visible, focused when active */}
                 <span
-                  className={`text-sm font-serif italic transition-all duration-300 whitespace-nowrap overflow-hidden ${
-                    isActive || isHovered
-                      ? "opacity-100 max-w-[120px]"
-                      : "opacity-0 max-w-0"
-                  } ${isActive ? "text-foreground" : "text-foreground/50"}`}
+                  className={`text-sm font-serif italic transition-all duration-300 whitespace-nowrap ${
+                    isActive
+                      ? "text-foreground"
+                      : "text-foreground/15 group-hover:text-foreground/40"
+                  }`}
                 >
                   {section.label}
                 </span>
@@ -114,7 +129,12 @@ export function ScrollTracker() {
         }}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 1.2, type: "spring", stiffness: 200, damping: 15 }}
+        transition={{
+          delay: 1.2,
+          type: "spring",
+          stiffness: 200,
+          damping: 15,
+        }}
       ></motion.div>
     </div>
   );

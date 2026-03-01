@@ -38,125 +38,198 @@ export default function Hook() {
     videoWrap.style.willChange = "clip-path";
     headlineMasked.style.willChange = "opacity";
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top top",
-          end: "+=500%",
-          pin: pinnedWrapper,
-          scrub: 1.5,
-          anticipatePin: 1,
-        },
-      });
+    const mm = gsap.matchMedia();
 
-      tl.fromTo(
-        videoWrap,
-        { clipPath: "inset(42% 42% 42% 42% round 16px)" },
-        {
-          clipPath: "inset(0% 0% 0% 0% round 0px)",
-          ease: "power2.inOut",
-          duration: 0.2,
-        },
-        0,
-      );
+    // ── Desktop: full two-phase text effect, 250% scroll ──
+    mm.add("(min-width: 768px)", () => {
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=250%",
+            pin: pinnedWrapper,
+            scrub: 1.5,
+            anticipatePin: 1,
+          },
+        });
 
-      const whiteChars =
-        headlineWhite.querySelectorAll<HTMLSpanElement>(".hook-char");
+        // Phase 1: Expand clip-path
+        tl.fromTo(
+          videoWrap,
+          { clipPath: "inset(42% 42% 42% 42% round 16px)" },
+          {
+            clipPath: "inset(0% 0% 0% 0% round 0px)",
+            ease: "power2.inOut",
+            duration: 0.2,
+          },
+          0,
+        );
 
-      tl.fromTo(
-        whiteChars,
-        { opacity: 0, y: 50, rotateX: -80 },
-        {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          stagger: 0.015,
-          ease: "power3.out",
-          duration: 0.15,
-        },
-        0.1,
-      );
+        // Phase 2: Stagger white chars in
+        const whiteChars =
+          headlineWhite.querySelectorAll<HTMLSpanElement>(".hook-char");
 
-      tl.fromTo(
-        sub,
-        { opacity: 0, y: 20, filter: "blur(6px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          ease: "power2.out",
-          duration: 0.1,
-        },
-        0.2,
-      );
+        tl.fromTo(
+          whiteChars,
+          { opacity: 0, y: 50, rotateX: -80 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            stagger: 0.015,
+            ease: "power3.out",
+            duration: 0.15,
+          },
+          0.1,
+        );
 
-      tl.to(
-        headlineWhite,
-        {
-          opacity: 0,
-          ease: "power2.inOut",
-          duration: 0.12,
-        },
-        0.45,
-      );
+        // Phase 2b: Subheadline fade in
+        tl.fromTo(
+          sub,
+          { opacity: 0, y: 20, filter: "blur(6px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            ease: "power2.out",
+            duration: 0.1,
+          },
+          0.2,
+        );
 
-      tl.fromTo(
-        headlineMasked,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          ease: "power2.inOut",
-          duration: 0.12,
-        },
-        0.47,
-      );
+        // Phase 3: Cross-fade white → masked
+        tl.to(
+          headlineWhite,
+          { opacity: 0, ease: "power2.inOut", duration: 0.12 },
+          0.45,
+        );
 
-      tl.to(
-        exitOverlay,
-        {
-          opacity: 1,
-          ease: "power2.in",
-          duration: 0.15,
-        },
-        0.8,
-      );
+        tl.fromTo(
+          headlineMasked,
+          { opacity: 0 },
+          { opacity: 1, ease: "power2.inOut", duration: 0.12 },
+          0.47,
+        );
 
-      tl.to(
-        headlineMasked,
-        {
-          opacity: 0,
-          scale: 0.9,
-          ease: "power2.in",
-          duration: 0.12,
-        },
-        0.82,
-      );
+        // Phase 4: Exit
+        tl.to(
+          exitOverlay,
+          { opacity: 1, ease: "power2.in", duration: 0.15 },
+          0.8,
+        );
 
-      tl.to(
-        sub,
-        {
-          opacity: 0,
-          y: -20,
-          ease: "power2.in",
-          duration: 0.1,
-        },
-        0.88,
-      );
+        tl.to(
+          headlineMasked,
+          { opacity: 0, scale: 0.9, ease: "power2.in", duration: 0.12 },
+          0.82,
+        );
 
-      tl.to(
-        videoWrap,
-        {
-          clipPath: "inset(48% 48% 48% 48% round 16px)",
-          ease: "power2.inOut",
-          duration: 0.15,
-        },
-        0.85,
-      );
-    }, section);
+        tl.to(
+          sub,
+          { opacity: 0, y: -20, ease: "power2.in", duration: 0.1 },
+          0.88,
+        );
+
+        tl.to(
+          videoWrap,
+          {
+            clipPath: "inset(48% 48% 48% 48% round 16px)",
+            ease: "power2.inOut",
+            duration: 0.15,
+          },
+          0.85,
+        );
+      }, section);
+
+      return () => ctx.revert();
+    });
+
+    // ── Mobile: skip white text, jump to masked, 120% scroll ──
+    mm.add("(max-width: 767px)", () => {
+      const ctx = gsap.context(() => {
+        // Hide white headline immediately on mobile
+        gsap.set(headlineWhite, { opacity: 0 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "+=120%",
+            pin: pinnedWrapper,
+            scrub: 1,
+            anticipatePin: 1,
+          },
+        });
+
+        // Phase 1: Expand clip-path quickly
+        tl.fromTo(
+          videoWrap,
+          { clipPath: "inset(42% 42% 42% 42% round 16px)" },
+          {
+            clipPath: "inset(0% 0% 0% 0% round 0px)",
+            ease: "power2.inOut",
+            duration: 0.25,
+          },
+          0,
+        );
+
+        // Phase 2: Immediately show masked headline + sub
+        tl.fromTo(
+          headlineMasked,
+          { opacity: 0 },
+          { opacity: 1, ease: "power2.out", duration: 0.2 },
+          0.05,
+        );
+
+        tl.fromTo(
+          sub,
+          { opacity: 0, y: 20, filter: "blur(6px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            ease: "power2.out",
+            duration: 0.2,
+          },
+          0.1,
+        );
+
+        // Phase 3: Exit
+        tl.to(
+          exitOverlay,
+          { opacity: 1, ease: "power2.in", duration: 0.15 },
+          0.7,
+        );
+
+        tl.to(
+          headlineMasked,
+          { opacity: 0, scale: 0.9, ease: "power2.in", duration: 0.12 },
+          0.72,
+        );
+
+        tl.to(
+          sub,
+          { opacity: 0, y: -20, ease: "power2.in", duration: 0.1 },
+          0.78,
+        );
+
+        tl.to(
+          videoWrap,
+          {
+            clipPath: "inset(48% 48% 48% 48% round 16px)",
+            ease: "power2.inOut",
+            duration: 0.15,
+          },
+          0.75,
+        );
+      }, section);
+
+      return () => ctx.revert();
+    });
 
     return () => {
-      ctx.revert();
+      mm.revert();
       videoWrap.style.willChange = "auto";
       headlineMasked.style.willChange = "auto";
     };

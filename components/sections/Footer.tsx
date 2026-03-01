@@ -44,7 +44,7 @@ export default function Footer() {
                 Pronto para <span className="italic text-primary">escalar</span>
                 ?
               </h2>
-              <p className="text-muted-foreground text-sm md:text-base max-w-md leading-relaxed">
+              <p className="text-foreground/80 text-sm md:text-base max-w-md leading-relaxed">
                 Transformamos marcas através de design excepcional,
                 desenvolvimento limpo e marketing focado em conversão. O seu
                 próximo nível começa aqui.
@@ -110,7 +110,7 @@ export default function Footer() {
 
           <div className="w-full h-[1px] bg-border/40 my-8" />
 
-          <div className="flex flex-col md:flex-row justify-between items-center text-[10px] md:text-xs text-muted-foreground/60 space-y-4 md:space-y-0 tracking-widest font-medium uppercase">
+          <div className="flex flex-col md:flex-row justify-between items-center text-[10px] md:text-xs text-foreground/80 space-y-4 md:space-y-0 tracking-widest font-medium uppercase">
             <p>
               © {new Date().getFullYear()} Creatives Marketing. Direitos
               reservados.

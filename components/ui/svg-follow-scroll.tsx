@@ -18,7 +18,7 @@ export const LinePath = ({
   strokeColor?: string;
   strokeWidth?: number;
 }) => {
-  const pathLength = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
+  const pathLength = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
   const opacity = useTransform(
     scrollYProgress,
     [0, 0.02, 0.9, 1],

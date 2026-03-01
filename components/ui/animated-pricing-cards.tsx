@@ -51,14 +51,14 @@ export const PricingWrapper: React.FC<{
 }) => (
   <article
     className={cn(
-      "h-full w-full bg-foreground/[0.02] dark:bg-foreground/[0.03] backdrop-blur-sm relative overflow-hidden rounded-[2rem] text-foreground flex flex-col transition-all duration-700 ease-out",
+      "h-full w-full bg-foreground/[0.03] dark:bg-foreground/[0.04] backdrop-blur-2xl relative overflow-hidden rounded-[2rem] text-foreground flex flex-col transition-all duration-700 ease-out",
       isActive
         ? "border-2 border-primary/50 shadow-2xl shadow-primary/10 scale-[1.01] bg-foreground/[0.04] dark:bg-foreground/[0.05]"
         : "border border-border/10 scale-100 hover:bg-foreground/[0.04]",
       className,
     )}
   >
-    <div className="w-full h-full relative z-[2] p-8 md:p-12 flex flex-col justify-between isolate">
+    <div className="w-full h-full relative z-[2] p-6 lg:p-10 flex flex-col justify-between isolate">
       {children}
       {buttonText && (
         <div className="w-full flex items-end justify-start mt-auto pt-8">

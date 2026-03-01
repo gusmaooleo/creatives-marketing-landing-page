@@ -177,7 +177,7 @@ export default function SeparatedServices() {
             viewport={{ once: true, margin: "-80px" }}
             variants={splineVariants}
           >
-            <div className="relative rounded-3xl overflow-hidden border border-border/10 bg-foreground/[0.02] dark:bg-foreground/[0.03] backdrop-blur-sm aspect-[4/3]">
+            <div className="relative rounded-3xl overflow-hidden border border-border/10 bg-foreground/[0.02] dark:bg-foreground/[0.03] backdrop-blur-sm aspect-[3/4] md:aspect-[4/3] w-full flex items-center justify-center">
               {/* Glow accent */}
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
@@ -185,7 +185,7 @@ export default function SeparatedServices() {
               {/* Spline scene */}
               <Spline
                 scene="https://prod.spline.design/F6xlnapQiviQYsKd/scene.splinecode"
-                className="w-full h-full -mb-32 translate-y-8 md:translate-y-12 scale-[1.1] ml-15"
+                className="w-full h-full -mb-32 translate-y-8 md:translate-y-12 scale-[1.3] min-[400px]:scale-[1.6] sm:scale-[2] md:scale-[1.1] md:ml-15 absolute inset-0"
               />
             </div>
 
@@ -206,6 +206,9 @@ export default function SeparatedServices() {
          * BENTO GRID & MOBILE CAROUSEL
          * ════════════════════════════════════════════════════════ */}
         <div className="relative">
+          {/* Background Orb to make card blur visible on mobile */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[60%] bg-primary/[0.08] dark:bg-primary/[0.05] rounded-full blur-[100px] pointer-events-none -z-10" />
+
           {/* Mobile Pagination Counter */}
           <div className="md:hidden absolute -top-16 right-0 border border-border/10 rounded-full px-4 py-1.5 backdrop-blur-sm bg-background/50 flex flex-col items-center">
             <span className="font-serif italic text-primary font-bold text-lg leading-none">
@@ -237,9 +240,9 @@ export default function SeparatedServices() {
                     isActive={isActive}
                     buttonText="Orçamento"
                   >
-                    <div className="flex flex-col lg:flex-row gap-8 w-full h-full">
-                      <div className="flex flex-col gap-6 lg:w-1/2 justify-center">
-                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full h-full">
+                      <div className="flex flex-col gap-4 lg:gap-6 lg:w-1/2 justify-center">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-1 lg:mb-2 block">
                           01. Presença Digital
                         </span>
                         <Heading>
@@ -251,7 +254,7 @@ export default function SeparatedServices() {
                           com a melhor vitrine.
                         </Paragraph>
                       </div>
-                      <div className="lg:w-1/2 w-full min-h-[250px] relative mt-4 lg:mt-0">
+                      <div className="lg:w-1/2 w-full h[180px] lg:h-auto lg:min-h-[250px] relative mt-2 lg:mt-0">
                         <div className="absolute inset-0 scale-[1.1] transform-gpu">
                           <MiniLandingPage />
                         </div>
@@ -277,9 +280,9 @@ export default function SeparatedServices() {
                     isActive={isActive}
                     buttonText=""
                   >
-                    <div className="flex flex-col gap-6 h-full justify-between">
-                      <div className="flex flex-col gap-6">
-                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                    <div className="flex flex-col gap-4 lg:gap-6 h-full justify-between">
+                      <div className="flex flex-col gap-4 lg:gap-6">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-1 lg:mb-2 block">
                           02. Escala
                         </span>
                         <Heading>Tráfego pago com foco em ROI real.</Heading>
@@ -288,7 +291,7 @@ export default function SeparatedServices() {
                           vendas com dados.
                         </Paragraph>
                       </div>
-                      <div className="w-full h-48 relative mt-6 rounded-[1.5rem] overflow-hidden flex items-center justify-center">
+                      <div className="w-full h-40 md:h-48 relative mt-4 md:mt-6 rounded-[1.5rem] overflow-hidden flex items-center justify-center">
                         <PieChart />
                       </div>
                     </div>
@@ -312,14 +315,14 @@ export default function SeparatedServices() {
                     isActive={isActive}
                     buttonText="Falar com especialista"
                   >
-                    <div className="flex flex-col md:flex-row gap-12 w-full h-full items-center">
-                      <div className="md:w-[45%] w-full h-64 md:h-full min-h-[300px] relative rounded-[2rem] overflow-hidden -ml-4 md:-ml-8 -mt-4 md:-mt-8 mb-4 md:-mb-8 -mr-4 md:mr-0 order-2 md:order-1">
+                    <div className="flex flex-col md:flex-row gap-6 md:gap-12 w-full h-full items-center">
+                      <div className="md:w-[45%] w-full h-48 md:h-full md:min-h-[300px] relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden -ml-2 md:-ml-8 -mt-2 md:-mt-8 mb-2 md:-mb-8 -mr-2 md:mr-0 order-2 md:order-1">
                         <div className="absolute inset-0 w-full h-full scale-[1.05]">
                           <FloatingFeed />
                         </div>
                       </div>
-                      <div className="flex flex-col gap-6 md:w-[55%] justify-center order-1 md:order-2">
-                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                      <div className="flex flex-col gap-4 md:gap-6 md:w-[55%] justify-center order-1 md:order-2">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-1 md:mb-2 block">
                           03. Comunidade
                         </span>
                         <Heading>
@@ -352,9 +355,9 @@ export default function SeparatedServices() {
                     isActive={isActive}
                     buttonText="Implementar automação"
                   >
-                    <div className="flex flex-col md:flex-row gap-12 w-full h-full items-center">
-                      <div className="flex flex-col gap-6 md:w-[50%] justify-center">
-                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                    <div className="flex flex-col md:flex-row gap-6 md:gap-12 w-full h-full items-center">
+                      <div className="flex flex-col gap-4 md:gap-6 md:w-[50%] justify-center">
+                        <span className="text-sm font-bold tracking-widest uppercase text-primary mb-1 md:mb-2 block">
                           04. Futuro
                         </span>
                         <Heading>
@@ -366,7 +369,7 @@ export default function SeparatedServices() {
                           operacionais enquanto vende mais.
                         </Paragraph>
                       </div>
-                      <div className="md:w-[50%] w-full h-64 md:h-[400px] min-h-[300px] relative rounded-[2rem] overflow-hidden -mx-4 md:mx-0 -mt-4 md:mt-0 mb-4 md:mb-0 flex items-center justify-center">
+                      <div className="md:w-[50%] w-full h-48 md:h-[400px] md:min-h-[300px] relative rounded-[1.5rem] md:rounded-[2rem] overflow-hidden -mx-2 md:mx-0 -mt-2 md:mt-0 mb-2 md:mb-0 flex items-center justify-center">
                         <div className="relative w-full h-full flex items-center justify-center scale-75 md:scale-100">
                           <AICore />
                         </div>
