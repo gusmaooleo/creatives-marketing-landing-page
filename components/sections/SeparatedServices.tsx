@@ -3,7 +3,17 @@
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles, BrainCircuit } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  PricingWrapper,
+  Heading,
+  Paragraph,
+} from "@/components/ui/animated-pricing-cards";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Spline = dynamic(() => import("@splinetool/react-spline"), {
   ssr: false,
@@ -13,6 +23,12 @@ const Spline = dynamic(() => import("@splinetool/react-spline"), {
     </div>
   ),
 });
+
+import { MiniLandingPage } from "./separated-services/MiniLandingPage";
+import { GrowthChart } from "./separated-services/GrowthChart";
+import { FloatingFeed } from "./separated-services/FloatingFeed";
+import { AICore } from "./separated-services/AICore";
+import { ServiceRow } from "./separated-services/ServiceRow";
 
 const textVariants: any = {
   hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
@@ -33,9 +49,52 @@ const splineVariants: any = {
   },
 };
 
+/* ════════════════════════════════════════════════════════
+ * MAIN COMPONENT
+ * ════════════════════════════════════════════════════════ */
+
 export default function SeparatedServices() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rowsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    // GSAP ScrollTrigger for the rows to slide up nicely as you scroll
+    const ctx = gsap.context(() => {
+      rowsRef.current.forEach((row, index) => {
+        if (!row) return;
+
+        gsap.fromTo(
+          row,
+          {
+            opacity: 0,
+            y: 80,
+            scale: 0.98,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: row,
+              start: "top 85%", // Triggers when the top of the row hits 85% of viewport
+              end: "top 50%",
+              scrub: 1, // Smooth scrub effect attached to scroll
+            },
+          },
+        );
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative overflow-hidden py-24 md:py-36">
+    <section
+      ref={containerRef}
+      className="relative overflow-hidden py-24 md:py-36 bg-background"
+    >
       {/* Grid background with vignette */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
@@ -53,7 +112,8 @@ export default function SeparatedServices() {
         }}
       />
 
-      <div className="relative z-10 container mx-auto px-4 md:px-8">
+      <div className="relative z-10 container mx-auto px-4 md:px-8 flex flex-col gap-24 md:gap-32">
+        {/* ROW 0: The original Intro / Spline Hero */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center">
           {/* Left — Text (cols 1-6) */}
           <motion.div
@@ -89,19 +149,6 @@ export default function SeparatedServices() {
               Combinamos criatividade humana com inteligência artificial para
               escalar sua presença digital de forma consistente.
             </motion.p>
-
-            <motion.div variants={textVariants}>
-              <Button
-                size="lg"
-                className="group rounded-full px-8 text-base font-medium gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all duration-300"
-                asChild
-              >
-                <a href="#contato">
-                  Faça um orçamento
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </a>
-              </Button>
-            </motion.div>
           </motion.div>
 
           {/* Right — Spline 3D (cols 7-12) */}
@@ -117,7 +164,7 @@ export default function SeparatedServices() {
               <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute -bottom-20 -left-20 w-48 h-48 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Spline scene — replace URL with your actual Spline scene */}
+              {/* Spline scene */}
               <Spline
                 scene="https://prod.spline.design/F6xlnapQiviQYsKd/scene.splinecode"
                 className="w-full h-full -mb-32 translate-y-8 md:translate-y-12 scale-[1.1] ml-15"
@@ -136,6 +183,147 @@ export default function SeparatedServices() {
             </motion.p>
           </motion.div>
         </div>
+
+        {/* ════════════════════════════════════════════════════════
+         * ROW 1: Landing Pages (Visual Left, Card Right)
+         * ════════════════════════════════════════════════════════ */}
+        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {(isActive) => (
+            <>
+              <div
+                ref={(el) => {
+                  rowsRef.current[0] = el;
+                }}
+                className="lg:col-span-6 order-2 lg:order-1 h-full min-h-[350px]"
+              >
+                <MiniLandingPage />
+              </div>
+              <div className="lg:col-span-6 order-1 lg:order-2">
+                <PricingWrapper
+                  contactHref="#contato"
+                  type="waves"
+                  isActive={isActive}
+                >
+                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                    01. Presença Digital
+                  </span>
+                  <Heading>Performance que converte. Design que retém.</Heading>
+                  <Paragraph>
+                    Landing pages e sites institucionais otimizados para
+                    velocidade, conversão e acessibilidade. Seu negócio com a
+                    melhor vitrine.
+                  </Paragraph>
+                </PricingWrapper>
+              </div>
+            </>
+          )}
+        </ServiceRow>
+
+        {/* ════════════════════════════════════════════════════════
+         * ROW 2: Paid Traffic (Card Left, Visual Right)
+         * ════════════════════════════════════════════════════════ */}
+        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {(isActive) => (
+            <>
+              <div
+                ref={(el) => {
+                  rowsRef.current[1] = el;
+                }}
+                className="lg:col-span-6 order-1"
+              >
+                <PricingWrapper
+                  contactHref="#contato"
+                  type="crosses"
+                  isActive={isActive}
+                >
+                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                    02. Escala
+                  </span>
+                  <Heading>Tráfego pago com foco em ROI real.</Heading>
+                  <Paragraph>
+                    Gestão inteligente de campanhas no Google Ads e Meta Ads.
+                    Investimos onde o retorno é mensurável, escalando suas
+                    vendas com dados.
+                  </Paragraph>
+                </PricingWrapper>
+              </div>
+              <div className="lg:col-span-6 order-2 h-full min-h-[350px]">
+                <GrowthChart />
+              </div>
+            </>
+          )}
+        </ServiceRow>
+
+        {/* ════════════════════════════════════════════════════════
+         * ROW 3: Social Media (Visual Left, Card Right)
+         * ════════════════════════════════════════════════════════ */}
+        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {(isActive) => (
+            <>
+              <div
+                ref={(el) => {
+                  rowsRef.current[2] = el;
+                }}
+                className="lg:col-span-6 order-2 lg:order-1 h-full min-h-[350px]"
+              >
+                <FloatingFeed />
+              </div>
+              <div className="lg:col-span-6 order-1 lg:order-2">
+                <PricingWrapper
+                  contactHref="#contato"
+                  type="waves"
+                  isActive={isActive}
+                >
+                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                    03. Comunidade
+                  </span>
+                  <Heading>
+                    Estratégias de conteúdo focadas em criar autoridade.
+                  </Heading>
+                  <Paragraph>
+                    Planejamento, roteiro e edição. Muito além de posts bonitos:
+                    criamos narrativas que conectam sua marca a quem importa.
+                  </Paragraph>
+                </PricingWrapper>
+              </div>
+            </>
+          )}
+        </ServiceRow>
+
+        {/* ════════════════════════════════════════════════════════
+         * ROW 4: AI Integrations (Card Left, Visual Right)
+         * ════════════════════════════════════════════════════════ */}
+        <ServiceRow className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {(isActive) => (
+            <>
+              <div
+                ref={(el) => {
+                  rowsRef.current[3] = el;
+                }}
+                className="lg:col-span-6 order-1"
+              >
+                <PricingWrapper
+                  contactHref="#contato"
+                  type="crosses"
+                  isActive={isActive}
+                >
+                  <span className="text-sm font-bold tracking-widest uppercase text-primary mb-2 block">
+                    04. Futuro
+                  </span>
+                  <Heading>Automação e IA no núcleo do seu negócio.</Heading>
+                  <Paragraph>
+                    Atendimento automático 24/7 via WhatsApp, CRM integrado e
+                    bots inteligentes. Reduza custos operacionais enquanto vende
+                    mais.
+                  </Paragraph>
+                </PricingWrapper>
+              </div>
+              <div className="lg:col-span-6 order-2 h-full min-h-[350px]">
+                <AICore />
+              </div>
+            </>
+          )}
+        </ServiceRow>
       </div>
     </section>
   );

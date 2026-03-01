@@ -44,7 +44,7 @@ export default function Home() {
           <div ref={scrollSectionsRef} className="relative">
             {/* SVG follow-scroll line — scoped to these sections only */}
             <div className="absolute top-0 right-0 w-full h-full z-[5] pointer-events-none overflow-hidden hidden lg:block">
-              <div className="sticky top-0 h-screen flex items-start justify-end pt-16 pr-4 xl:pr-12">
+              <div className="absolute left-[20%] top-[400px] z-0 pointer-events-none hidden md:block">
                 <LinePath
                   scrollYProgress={scrollYProgress}
                   strokeColor="var(--primary)"
